@@ -68,7 +68,7 @@ public:
 
     void operator+=(const Record& r) { Logger::get()->record(r); }
 
-    static Logger& init(Severity severity = none,
+    static Logger& init(Severity severity = silent,
                         const Path& path = std::filesystem::current_path()) {
         static Logger logger(severity, path);
         return logger;
@@ -88,7 +88,6 @@ private:
 
     Logger(Severity severity, const Path& path) : severity_(severity), path_(path) {
         this->prepare_stream();
-        this->record(Severity::info, __FILE_NAME__, __FUNCTION__, __LINE__, "Initial log");
     }
 
     void prepare_stream() {

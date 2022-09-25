@@ -14,14 +14,14 @@
     IF_LOG(severity) *logger::Logger::get() \
         += logger::Record(severity, GET_FILE, GET_FUNC, GET_LINE)
 
-#define LOGF LOG(logger::fatal)
-#define LOGE LOG(logger::error)
-#define LOGI LOG(logger::info)
-#define LOGT LOG(logger::trace)
-#define LOGD LOG(logger::debug)
+#define LOG_FATAL   LOG(logger::fatal)
+#define LOG_ERROR   LOG(logger::error)
+#define LOG_INFO    LOG(logger::info)
+#define LOG_TRACE   LOG(logger::trace)
+#define LOG_DEBUG   LOG(logger::debug)
 
-#define LOG_FATAL LOGF
-#define LOG_ERROR LOGE
-#define LOG_INFO LOGI
-#define LOG_TRACE LOGT
-#define LOG_DEBUG LOGD
+#define LOGF LOG_FATAL
+#define LOGE LOG_ERROR
+#define LOGI LOG_INFO
+#define LOGT LOG_TRACE
+#define LOGD LOG_DEBUG
