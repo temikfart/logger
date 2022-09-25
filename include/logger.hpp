@@ -34,13 +34,11 @@ public:
     }
 
     Severity severity() const { return severity_; }
-    Record& ref() { return *this; }
 
     friend std::ostream& operator<<(std::ostream& os, const Record& record) {
         os << record.to_string();
         return os;
     }
-
     template <typename T>
     Record& operator<<(const T& data) {
         msg_ << data;
@@ -84,20 +82,20 @@ public:
     }
 
 private:
-    Path path_ = std::filesystem::current_path();
+    Path path_;
+    Severity severity_;
     std::fstream output_;
-    Severity severity_ = Severity::info;
 
     Logger(Severity severity, const Path& path) : severity_(severity), path_(path) {
         this->prepare_stream();
         this->record(Severity::info, __FILE_NAME__, __FUNCTION__, __LINE__, "Initial log");
     }
+
     void prepare_stream() {
         output_.open(path_, std::ios::out);
         // TODO: validate file existing.
         // TODO: validate is output opened.
     }
-
     void record(Severity severity, const std::string& file, const std::string& func,
                 unsigned line, const std::string& msg) {
         Record r(severity, file, func, line);

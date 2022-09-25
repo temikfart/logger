@@ -6,14 +6,10 @@
 #define GET_FUNC __FUNCTION__
 #define GET_LINE __LINE__
 
-//#define LOG_(severity, msg) \
-//    logger::Logger::get()->record(severity, GET_FILE, GET_FUNC, GET_LINE, msg)
-
-//#define LOG(severity) LOG_(severity, "")
-
 #define IF_LOG(severity) \
     if (logger::Logger::get() == nullptr || !logger::Logger::check_severity(severity)) {;} \
     else
+
 #define LOG(severity) \
     IF_LOG(severity) *logger::Logger::get() \
         += logger::Record(severity, GET_FILE, GET_FUNC, GET_LINE)
