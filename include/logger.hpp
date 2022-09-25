@@ -56,48 +56,34 @@ private:
     std::ostringstream msg_;
 };
 
-class Logger {
+class Logger : public utils::Singleton<Logger> {
 public:
     Path path() const { return path_; }
 
     void set_severity(Severity severity) { severity_ = severity; }
     Severity severity() const { return severity_; }
-    static bool check_severity(Severity severity) { return Logger::get()->severity() >= severity; }
+    static bool check_severity(Severity severity) {
+        return severity <= Logger::get()->severity_;
+    }
 
     void record(const Record& r) { output_ << r << std::endl; }
 
     void operator+=(const Record& r) { Logger::get()->record(r); }
 
-    static Logger* init(Severity severity, const Path& path) {
-        if (Logger::instance_ == nullptr) {
-            Logger::instance_ = new Logger(severity, path);
-        }
-        return Logger::instance_;
+    static Logger& init(Severity severity = none,
+                        const Path& path = std::filesystem::current_path()) {
+        static Logger logger(severity, path);
+        return logger;
     }
     static Logger* get() {
-        if (instance_ == nullptr)
-            std::cerr << "Logger: WARNING! Logger is not initialized. Use 'init()' method."
-                << std::endl;
-        return instance_;
-    }
-
-    void delete_instance() {
-        this->record(logger::Severity::info, __FILE_NAME__, __FUNCTION__, __LINE__, "End");
-        output_.close();
-        delete instance_;
-    }
-
-    Logger(const Logger& rhs)               = delete;
-    Logger(Logger&& rhs)                    = delete;
-    Logger& operator=(const Logger& rhs)    = delete;
-    Logger& operator=(Logger&& rhs)         = delete;
-    ~Logger() {
-        this->record(logger::Severity::info, __FILE_NAME__, __FUNCTION__, __LINE__, "End2");
-//        output_.close();
+        auto* instance = Logger::get_instance();
+        if (instance == nullptr)
+            std::cerr << "Logger: ERROR! Can't print a LOG message: the logger is not initialized. "
+                         "Use 'init()' method." << std::endl;
+        return instance;
     }
 
 private:
-    static Logger* instance_;
     Path path_ = std::filesystem::current_path();
     std::fstream output_;
     Severity severity_ = Severity::info;
@@ -119,7 +105,5 @@ private:
         this->record(r);
     }
 };
-
-Logger* Logger::instance_ = nullptr;
 
 } // logger
