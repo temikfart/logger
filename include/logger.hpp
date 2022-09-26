@@ -81,6 +81,8 @@ public:
         return instance;
     }
 
+    ~Logger() { this->close_stream(); }
+
 private:
     Path path_;
     Severity severity_;
@@ -95,12 +97,7 @@ private:
         // TODO: validate file existing.
         // TODO: validate is output opened.
     }
-    void record(Severity severity, const std::string& file, const std::string& func,
-                unsigned line, const std::string& msg) {
-        Record r(severity, file, func, line);
-        r << msg;
-        this->record(r);
-    }
+    void close_stream() { output_.close(); }
 };
 
 } // logger
