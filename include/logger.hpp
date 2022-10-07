@@ -93,13 +93,18 @@ private:
     }
 
     void create_log_dir(const fs::path& path) {
-        log_dir_path_ = fs::canonical(fs::is_directory(path) ? path : path.parent_path());
-        fs::create_directories(path);
+        if (fs::exists(path))
+            log_dir_path_
+                = (fs::is_directory(path) ? path : path.parent_path()).string();
+        else
+            log_dir_path_
+                = utils::get_parent_path(path).string() + "/" + utils::get_dirname(path);
+        fs::create_directories(log_dir_path_);
     }
     void open_log_file() {
         utils::Time timestamp;
-        auto filename = utils::to_filename(timestamp, log_dir_path_);
-        output_.set_path(filename);
+        auto filepath = utils::to_filepath(timestamp, log_dir_path_);
+        output_.set_path(filepath);
         output_.open();
     }
 };

@@ -23,12 +23,42 @@ std::string to_string(const Time& time) {
     ss << std::put_time(gmtime(&itt), "%F %T");
     return ss.str();
 }
-std::string to_filename(const Time& time, const fs::path& dir) {
+std::string to_filepath(const Time& time, const fs::path& dir) {
     auto filename = to_string(time);
     std::replace_if(filename.begin(), filename.end(),
                     [](auto& c) { return (c == ' ' || c == ':'); }, '-');
-    filename = dir.string() + '/' + filename + ".log";
-    return filename;
+    return (dir.string() + '/' + filename + ".log");
+}
+std::string get_dirname(const fs::path& path) {
+    if (path.string().empty())
+        return "";
+    if (fs::exists(path))
+        return fs::canonical(path).filename();
+
+    auto str = path.string();
+    unsigned length = str.length();
+    while (length > 0 && (str[length - 1] == '.' || str[length - 1] == '/'))
+        length--;
+    str = str.substr(0, length);
+    return str.substr(str.rfind('/') + 1);
+}
+fs::path get_parent_path(const fs::path& path) {
+    if (fs::exists(path) || path.string().empty())
+        return path.parent_path();
+
+    auto str = path.string();
+    unsigned length = str.length();
+    bool end = false;
+
+    // remove slashes and return path
+    if (str[length - 1] == '/') end = true;
+    while (length > 0 && str[length - 1] == '/') length--;
+    if (end) return str.substr(0, length);
+
+    // remove name and return path
+    while (length > 0 && str[length - 1] != '/') length--;
+    if (length > 0 && str[length - 1] == '/') length--;
+    return str.substr(0, length);
 }
 
 class NonCopyable {
@@ -58,32 +88,17 @@ private:
 template<class T>
 T* Singleton<T>::instance_ = nullptr;
 
-// TODO: remove it.
-void demo_perms(fs::perms p)
-{
-    std::cout << ((p & fs::perms::owner_read) != fs::perms::none ? "r" : "-")
-              << ((p & fs::perms::owner_write) != fs::perms::none ? "w" : "-")
-              << ((p & fs::perms::owner_exec) != fs::perms::none ? "x" : "-")
-              << ((p & fs::perms::group_read) != fs::perms::none ? "r" : "-")
-              << ((p & fs::perms::group_write) != fs::perms::none ? "w" : "-")
-              << ((p & fs::perms::group_exec) != fs::perms::none ? "x" : "-")
-              << ((p & fs::perms::others_read) != fs::perms::none ? "r" : "-")
-              << ((p & fs::perms::others_write) != fs::perms::none ? "w" : "-")
-              << ((p & fs::perms::others_exec) != fs::perms::none ? "x" : "-")
-              << std::endl;
-}
-
 class OutFileStream : public NonCopyable {
 public:
     OutFileStream() = default;
-    OutFileStream(const std::filesystem::path& path) { this->set_path(path); }
+    OutFileStream(const fs::path& path) { this->set_path(path); }
     ~OutFileStream() { if (this->is_open()) this->close(); }
 
-    void set_path(const std::filesystem::path& path) {
+    void set_path(const fs::path& path) {
         if (!fs::exists(path) || fs::is_regular_file(path))
             path_ = path;
     }
-    const std::filesystem::path& path() const { return path_; }
+    const fs::path& path() const { return path_; }
 
     bool open(std::ios_base::openmode mode = std::ios::out) { output_.open(path_, mode); }
     bool is_open() const { return output_.is_open(); }
@@ -100,7 +115,7 @@ public:
     }
 
 private:
-    std::filesystem::path path_;
+    fs::path path_;
     std::ofstream output_;
 };
 
