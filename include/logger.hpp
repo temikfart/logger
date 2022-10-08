@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <iostream>
 #include <filesystem>
 #include <chrono>
@@ -9,12 +10,12 @@
 #include "utils.hpp"
 #include "severity.hpp"
 
+namespace fs = std::filesystem;
+
 namespace logger {
 
 class Logger;
 struct Record;
-
-using Path = std::filesystem::path;
 
 struct Record {
 public:
@@ -56,20 +57,8 @@ private:
 
 class Logger : public utils::Singleton<Logger> {
 public:
-    Path path() const { return path_; }
-
-    void set_severity(Severity severity) { severity_ = severity; }
-    Severity severity() const { return severity_; }
-    static bool check_severity(Severity severity) {
-        return severity <= Logger::get()->severity_;
-    }
-
-    void record(const Record& r) { output_ << r << std::endl; }
-
-    void operator+=(const Record& r) { Logger::get()->record(r); }
-
     static Logger& init(Severity severity = silent,
-                        const Path& path = std::filesystem::current_path()) {
+                        const fs::path& path = std::filesystem::current_path()) {
         static Logger logger(severity, path);
         return logger;
     }
@@ -81,23 +70,43 @@ public:
         return instance;
     }
 
-    ~Logger() { this->close_stream(); }
+    void set_severity(Severity severity) { severity_ = severity; }
+    Severity severity() const { return severity_; }
+    static bool check_severity(Severity severity) {
+        return severity <= Logger::get()->severity_;
+    }
+
+    void record(const Record& r) { output_ << r << std::endl; }
+
+    void operator+=(const Record& r) { Logger::get()->record(r); }
+
+    ~Logger() = default;
 
 private:
-    Path path_;
+    fs::path log_dir_path_;
     Severity severity_;
-    std::fstream output_;
+    utils::OutFileStream output_;
 
-    Logger(Severity severity, const Path& path) : severity_(severity), path_(path) {
-        this->prepare_stream();
+    Logger(Severity severity, const fs::path& log_dir_path) : severity_(severity) {
+        this->create_log_dir(log_dir_path);
+        this->open_log_file();
     }
 
-    void prepare_stream() {
-        output_.open(path_, std::ios::out);
-        // TODO: validate file existing.
-        // TODO: validate is output opened.
+    void create_log_dir(const fs::path& path) {
+        if (fs::exists(path))
+            log_dir_path_
+                = (fs::is_directory(path) ? path : path.parent_path()).string();
+        else
+            log_dir_path_
+                = utils::get_parent_path(path).string() + "/" + utils::get_dirname(path);
+        fs::create_directories(log_dir_path_);
     }
-    void close_stream() { output_.close(); }
+    void open_log_file() {
+        utils::Time timestamp;
+        auto filepath = utils::to_filepath(timestamp, log_dir_path_);
+        output_.set_path(filepath);
+        output_.open();
+    }
 };
 
 } // logger

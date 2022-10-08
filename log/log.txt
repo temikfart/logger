@@ -1,2 +1,0 @@
-2022-09-26 13:18:55 [INFO] main.cpp main() at line 7: Hello, world!
-2022-09-26 13:18:55 [INFO] main.cpp main() at line 8: Short form

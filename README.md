@@ -14,15 +14,14 @@ were come up and developed in the
 
 Now, you can download this repository and manually integrate
 `Logger` into your project.
-* Import `logger.hpp`, where you want to use `Logger`;
-* Create `log.txt` file, where logs will be placed;
+* Import `logger.hpp` and `macro.hpp`, where you want to use `Logger`;
 * Write your first log:
     ```C++
     #include "logger.hpp"
     #include "macro.hpp"
     
     int main() {
-        logger::Logger::init(logger::info, "log.txt");
+        logger::Logger::init(logger::info, "../log");
   
         LOG(logger::info) << "Hello, world!";
         LOGI << "Short form";
@@ -30,7 +29,7 @@ Now, you can download this repository and manually integrate
         return 0;
     }
     ```
-* Read logs in the `log.txt` file:
+* Read logs in the `2022-09-25-22:26:16.log` file:
     ```
     2022-09-25 22:26:16 [INFO] main.cpp main() at line 11: Hello, world!
     2022-09-25 22:26:16 [INFO] main.cpp main() at line 12: Short form
