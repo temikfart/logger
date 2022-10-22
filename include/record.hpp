@@ -20,7 +20,8 @@ public:
            << " " << file_
            << " " << func_ << "()"
            << " at line " << line_
-           << ": " << msg_.str();
+           << ": " << utils::remove_linebreaks(msg_.str())
+           << std::endl;
         return ss.str();
     }
 

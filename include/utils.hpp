@@ -13,6 +13,9 @@ struct Time {
     const std::chrono::time_point<std::chrono::system_clock> timestamp;
 };
 
+std::string remove_linebreaks(const std::string& str) {
+    return str.substr(0, str.rfind('\n'));
+}
 std::string to_upper(std::string str) {
     std::transform(str.begin(), str.end(), str.begin(), toupper);
     return str;

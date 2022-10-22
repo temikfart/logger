@@ -6,6 +6,7 @@
 #include <chrono>
 #include <sstream>
 #include <fstream>
+#include <vector>
 
 #include "appenders.hpp"
 #include "record.hpp"
@@ -18,10 +19,18 @@ namespace logger {
 
 class Logger : public utils::Singleton<Logger> {
 public:
-    static Logger& init(Severity severity = silent,
+    static Logger& init(Severity severity, StreamType type) {
+        static ConsoleAppender console_appender(type);
+        return init(severity, &console_appender);
+    }
+    static Logger& init(Severity severity,
                         const fs::path& path = std::filesystem::current_path()) {
-        static Logger logger(severity, path);
-        return logger;
+        static FileAppender file_appender(path);
+        return init(severity, &file_appender);
+    }
+    static Logger& init(Severity severity, IAppender* appender = nullptr) {
+        static Logger logger(severity);
+        return appender ? logger.add_appender(appender) : logger;
     }
     static Logger* get() {
         auto* instance = Logger::get_instance();
@@ -30,6 +39,11 @@ public:
                          "Use 'init()' method." << std::endl;
         return instance;
     }
+    Logger& add_appender(IAppender* appender) {
+        auto apIt = std::find(appenders_.begin(), appenders_.end(), appender);
+        if (apIt == appenders_.end()) appenders_.push_back(appender);
+        return *this;
+    }
 
     void set_severity(Severity severity) { severity_ = severity; }
     Severity severity() const { return severity_; }
@@ -37,37 +51,20 @@ public:
         return severity <= Logger::get()->severity_;
     }
 
-    void record(const Record& r) { output_ << r << std::endl; }
+    void record(const Record& r) {
+        for (auto* ap : appenders_)
+            ap->write(r);
+    }
 
     void operator+=(const Record& r) { Logger::get()->record(r); }
 
     ~Logger() = default;
 
 private:
-    fs::path log_dir_path_;
     Severity severity_;
-    FileAppender output_;
+    std::vector<IAppender*> appenders_;
 
-    Logger(Severity severity, const fs::path& log_dir_path) : severity_(severity) {
-        this->create_log_dir(log_dir_path);
-        this->open_log_file();
-    }
-
-    void create_log_dir(const fs::path& path) {
-        if (fs::exists(path))
-            log_dir_path_
-                = (fs::is_directory(path) ? path : path.parent_path()).string();
-        else
-            log_dir_path_
-                = utils::get_parent_path(path).string() + "/" + utils::get_dirname(path);
-        fs::create_directories(log_dir_path_);
-    }
-    void open_log_file() {
-        utils::Time timestamp;
-        auto filepath = utils::to_filepath(timestamp, log_dir_path_);
-        output_.set_path(filepath);
-        output_.open();
-    }
+    Logger(Severity severity) : severity_(severity) {}
 };
 
 } // logger
