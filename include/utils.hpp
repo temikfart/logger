@@ -2,15 +2,23 @@
 
 #include <algorithm>
 #include <string>
+#include <chrono>
+#include <ctime>
 
 namespace fs = std::filesystem;
 
 namespace utils {
 
-struct Time {
-    Time() : timestamp(std::chrono::system_clock::now()) {}
+using SysClock = std::chrono::system_clock;
+using TimePoint = std::chrono::time_point<SysClock>;
+using MilliSec = std::chrono::milliseconds;
 
-    const std::chrono::time_point<std::chrono::system_clock> timestamp;
+static const int MS_IN_SEC = 1000;
+
+struct Time {
+    Time() : timestamp(SysClock::now()) {}
+
+    const TimePoint timestamp;
 };
 
 std::string remove_linebreaks(const std::string& str) {
@@ -21,15 +29,18 @@ std::string to_upper(std::string str) {
     return str;
 }
 std::string to_string(const Time& time) {
-    auto itt = std::chrono::system_clock::to_time_t(time.timestamp);
+    auto tse = std::chrono::duration_cast<MilliSec>(time.timestamp.time_since_epoch());
+    int ms = (int)(tse.count() % MS_IN_SEC);
+    auto itt = SysClock::to_time_t(time.timestamp);
     std::ostringstream ss;
-    ss << std::put_time(gmtime(&itt), "%F %T");
+    ss << std::put_time(gmtime(&itt), "%F %T.") << ms;
     return ss.str();
 }
 std::string to_filepath(const Time& time, const fs::path& dir) {
     auto filename = to_string(time);
     std::replace_if(filename.begin(), filename.end(),
                     [](auto& c) { return (c == ' ' || c == ':'); }, '-');
+    filename = filename.substr(0, filename.rfind('.'));
     return (dir.string() + '/' + filename + ".log");
 }
 std::string get_dirname(const fs::path& path) {

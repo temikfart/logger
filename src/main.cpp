@@ -2,8 +2,8 @@
 #include "init.hpp"
 
 int main() {
-    logger::init(logger::Severity::info, "../log");
-    logger::init(logger::Severity::trace, logger::cout);
+    logger::init(logger::Severity::debug, "../log");
+    logger::init(logger::Severity::info, logger::cout);
 
 //    LOG(logger::info) << "Hello, world!";
 //    LOGI << "Short form";
