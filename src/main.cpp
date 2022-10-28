@@ -1,13 +1,18 @@
-#include "logger.hpp"
 #include "macro.hpp"
+#include "init.hpp"
 
 int main() {
-    logger::Logger::init(logger::Severity::info, "../log");
-    logger::Logger::init(logger::Severity::info, logger::cerr);
-    logger::Logger::init(logger::Severity::info, "../logs");
+    logger::init(logger::Severity::info, "../log");
+    logger::init(logger::Severity::trace, logger::cout);
 
-    LOG(logger::info) << "Hello, world!";
-    LOGI << "Short form";
+//    LOG(logger::info) << "Hello, world!";
+//    LOGI << "Short form";
+
+    LOGF << "FATAL ERROR";
+    LOGE << "ERROR";
+    LOGI << "INFORMATION";
+    LOGT << "TRACE";
+    LOGD << "DEBUG";
 
     return 0;
 }

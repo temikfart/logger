@@ -1,6 +1,7 @@
 #pragma once
 
 #include "record.hpp"
+#include "severity.hpp"
 
 namespace logger {
 
@@ -13,14 +14,21 @@ enum StreamType {
 
 class IAppender {
 public:
+    IAppender() = default;
+    IAppender(Severity severity) : severity_(severity) {}
     virtual ~IAppender() = default;
     virtual void write(const Record& record) = 0;
+    Severity severity() const { return severity_; }
+    void set_severity(Severity severity) { severity_ = severity; }
+
+private:
+    Severity severity_ = silent;
 };
 
 class FileAppender : public IAppender {
 public:
     FileAppender() = default;
-    FileAppender(const fs::path& path) {
+    FileAppender(Severity severity, const fs::path& path) : IAppender(severity) {
         this->create_dir(path);
         this->open_file();
     }
@@ -71,10 +79,28 @@ private:
 
 class ConsoleAppender : public IAppender {
 public:
-    ConsoleAppender(StreamType type) : output_(type == cout ? std::cout : std::cerr) {}
+    ConsoleAppender(Severity severity, StreamType type)
+        : IAppender(severity), output_(type == cout ? std::cout : std::cerr) {}
 
     void write(const Record& record) override {
+        switch (record.severity()) {
+            case fatal:
+                output_ << "\x1B[97m\x1B[41m";
+                break;
+            case error:
+                output_ << "\x1B[91m";
+                break;
+            case trace:
+                output_ << "\x1B[96m";
+                break;
+            case debug:
+                output_ << "\x1B[97m";
+                break;
+            default:
+                break;
+        }
         output_ << record.to_string();
+        output_ << "\x1B[0m";
     }
 
 private:
