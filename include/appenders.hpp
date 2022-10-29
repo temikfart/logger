@@ -12,23 +12,31 @@ enum StreamType {
     cerr
 };
 
+enum AppenderType {
+    file,
+    console
+};
+
 class IAppender {
 public:
-    IAppender() = default;
-    IAppender(Severity severity) : severity_(severity) {}
+    IAppender(AppenderType type) : appender_type_(type) {}
+    IAppender(AppenderType type, Severity severity) : appender_type_(type), severity_(severity) {}
     virtual ~IAppender() = default;
     virtual void write(const Record& record) = 0;
     Severity severity() const { return severity_; }
     void set_severity(Severity severity) { severity_ = severity; }
+    AppenderType type() const { return appender_type_; }
 
 private:
     Severity severity_ = silent;
+    AppenderType appender_type_;
 };
 
 class FileAppender : public IAppender {
 public:
-    FileAppender() = default;
-    FileAppender(Severity severity, const fs::path& path) : IAppender(severity) {
+    FileAppender() : IAppender(AppenderType::file) {}
+    FileAppender(Severity severity, const fs::path& path)
+        : IAppender(AppenderType::file, severity) {
         this->create_dir(path);
         this->open_file();
     }
@@ -79,8 +87,9 @@ private:
 
 class ConsoleAppender : public IAppender {
 public:
-    ConsoleAppender(Severity severity, StreamType type)
-        : IAppender(severity), output_(type == cout ? std::cout : std::cerr) {}
+    ConsoleAppender(Severity severity, StreamType os_type)
+        : IAppender(AppenderType::console, severity),
+          output_(os_type == cout ? std::cout : std::cerr) {}
 
     void write(const Record& record) override {
         switch (record.severity()) {

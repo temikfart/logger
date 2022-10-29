@@ -4,6 +4,7 @@
 #include <string>
 #include <chrono>
 #include <ctime>
+#include <iomanip>
 
 namespace fs = std::filesystem;
 
@@ -33,7 +34,8 @@ std::string to_string(const Time& time) {
     int ms = (int)(tse.count() % MS_IN_SEC);
     auto itt = SysClock::to_time_t(time.timestamp);
     std::ostringstream ss;
-    ss << std::put_time(gmtime(&itt), "%F %T.") << ms;
+    ss << std::put_time(gmtime(&itt), "%F %T.")
+       << std::setw(3) << std::setfill('0') << ms;
     return ss.str();
 }
 std::string to_filepath(const Time& time, const fs::path& dir) {
