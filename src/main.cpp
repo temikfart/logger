@@ -1,5 +1,4 @@
-#include "macro.hpp"
-#include "init.hpp"
+#include "log.hpp"
 
 int main() {
     logger::init(logger::Severity::debug, "../log");

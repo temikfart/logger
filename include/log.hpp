@@ -1,6 +1,6 @@
 #pragma once
 
-#include "logger.hpp"
+#include "init.hpp"
 
 #define GET_FILE __FILE_NAME__
 #define GET_FUNC __FUNCTION__
