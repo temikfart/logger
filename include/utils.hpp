@@ -1,32 +1,49 @@
 #pragma once
 
 #include <algorithm>
+#include <chrono>
+#include <ctime>
+#include <filesystem>
+#include <iomanip>
 #include <string>
 
 namespace fs = std::filesystem;
 
 namespace utils {
 
-struct Time {
-    Time() : timestamp(std::chrono::system_clock::now()) {}
+using SysClock = std::chrono::system_clock;
+using TimePoint = std::chrono::time_point<SysClock>;
+using MilliSec = std::chrono::milliseconds;
 
-    const std::chrono::time_point<std::chrono::system_clock> timestamp;
+static const int MS_IN_SEC = 1000;
+
+struct Time {
+    Time() : timestamp(SysClock::now()) {}
+
+    const TimePoint timestamp;
 };
 
+std::string remove_linebreaks(const std::string& str) {
+    return str.substr(0, str.rfind('\n'));
+}
 std::string to_upper(std::string str) {
     std::transform(str.begin(), str.end(), str.begin(), toupper);
     return str;
 }
 std::string to_string(const Time& time) {
-    auto itt = std::chrono::system_clock::to_time_t(time.timestamp);
+    auto tse = std::chrono::duration_cast<MilliSec>(time.timestamp.time_since_epoch());
+    int ms = (int) (tse.count() % MS_IN_SEC);
+    auto itt = SysClock::to_time_t(time.timestamp);
     std::ostringstream ss;
-    ss << std::put_time(gmtime(&itt), "%F %T");
+    ss << std::put_time(gmtime(&itt), "%F %T.")
+       << std::setw(3) << std::setfill('0') << ms;
     return ss.str();
 }
 std::string to_filepath(const Time& time, const fs::path& dir) {
     auto filename = to_string(time);
     std::replace_if(filename.begin(), filename.end(),
                     [](auto& c) { return (c == ' ' || c == ':'); }, '-');
+    filename = filename.substr(0, filename.rfind('.'));
     return (dir.string() + '/' + filename + ".log");
 }
 std::string get_dirname(const fs::path& path) {
@@ -63,10 +80,10 @@ fs::path get_parent_path(const fs::path& path) {
 
 class NonCopyable {
 public:
-    NonCopyable(const NonCopyable& rhs)               = delete;
-    NonCopyable(NonCopyable&& rhs)                    = delete;
-    NonCopyable& operator=(const NonCopyable& rhs)    = delete;
-    NonCopyable& operator=(NonCopyable&& rhs)         = delete;
+    NonCopyable(const NonCopyable& rhs) = delete;
+    NonCopyable(NonCopyable&& rhs) = delete;
+    NonCopyable& operator=(const NonCopyable& rhs) = delete;
+    NonCopyable& operator=(NonCopyable&& rhs) = delete;
     ~NonCopyable() = default;
 
 protected:
@@ -85,37 +102,7 @@ private:
     static T* instance_;
 };
 
-template<class T>
+template <class T>
 T* Singleton<T>::instance_ = nullptr;
 
-class OutFileStream : public NonCopyable {
-public:
-    OutFileStream() = default;
-    OutFileStream(const fs::path& path) { this->set_path(path); }
-
-    void set_path(const fs::path& path) {
-        if (!fs::exists(path) || fs::is_regular_file(path))
-            path_ = path;
-    }
-    const fs::path& path() const { return path_; }
-
-    void open(std::ios_base::openmode mode = std::ios::out) { output_.open(path_, mode); }
-    bool is_open() const { return output_.is_open(); }
-    void close() { if (this->is_open()) output_.close(); }
-
-    OutFileStream& operator<<(std::ostream& (*os)(std::ostream&)) {
-        output_ << os;
-        return (*this);
-    }
-    template <typename T>
-    OutFileStream& operator<<(const T& data) {
-        output_ << data;
-        return (*this);
-    }
-
-private:
-    fs::path path_;
-    std::ofstream output_;
-};
-
-}
+} // utils

@@ -1,8 +1,7 @@
-#include "logger.hpp"
-#include "macro.hpp"
+#include "log.hpp"
 
 int main() {
-    logger::Logger::init(logger::Severity::info, "../log");
+    logger::init(logger::Severity::debug, "../log");
 
     LOG(logger::info) << "Hello, world!";
     LOGI << "Short form";
