@@ -1,10 +1,11 @@
 #pragma once
 
 #include <algorithm>
-#include <string>
 #include <chrono>
 #include <ctime>
+#include <filesystem>
 #include <iomanip>
+#include <string>
 
 namespace fs = std::filesystem;
 
@@ -31,7 +32,7 @@ std::string to_upper(std::string str) {
 }
 std::string to_string(const Time& time) {
     auto tse = std::chrono::duration_cast<MilliSec>(time.timestamp.time_since_epoch());
-    int ms = (int)(tse.count() % MS_IN_SEC);
+    int ms = (int) (tse.count() % MS_IN_SEC);
     auto itt = SysClock::to_time_t(time.timestamp);
     std::ostringstream ss;
     ss << std::put_time(gmtime(&itt), "%F %T.")
@@ -79,10 +80,10 @@ fs::path get_parent_path(const fs::path& path) {
 
 class NonCopyable {
 public:
-    NonCopyable(const NonCopyable& rhs)               = delete;
-    NonCopyable(NonCopyable&& rhs)                    = delete;
-    NonCopyable& operator=(const NonCopyable& rhs)    = delete;
-    NonCopyable& operator=(NonCopyable&& rhs)         = delete;
+    NonCopyable(const NonCopyable& rhs) = delete;
+    NonCopyable(NonCopyable&& rhs) = delete;
+    NonCopyable& operator=(const NonCopyable& rhs) = delete;
+    NonCopyable& operator=(NonCopyable&& rhs) = delete;
     ~NonCopyable() = default;
 
 protected:
@@ -101,7 +102,7 @@ private:
     static T* instance_;
 };
 
-template<class T>
+template <class T>
 T* Singleton<T>::instance_ = nullptr;
 
 } // utils

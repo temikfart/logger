@@ -1,19 +1,12 @@
 #pragma once
 
-#include <algorithm>
 #include <iostream>
-#include <filesystem>
-#include <sstream>
-#include <fstream>
-#include <vector>
 #include <map>
 
 #include "appenders.hpp"
 #include "record.hpp"
-#include "utils.hpp"
 #include "severity.hpp"
-
-namespace fs = std::filesystem;
+#include "utils.hpp"
 
 namespace logger {
 
@@ -32,7 +25,7 @@ public:
         return *this;
     }
     void record(const Record& r) {
-        for (auto [type, ap] : appenders_)
+        for (auto[type, ap]: appenders_)
             if (ap->severity() >= r.severity())
                 ap->write(r);
     }

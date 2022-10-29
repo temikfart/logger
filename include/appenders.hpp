@@ -1,7 +1,12 @@
 #pragma once
 
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+
 #include "record.hpp"
 #include "severity.hpp"
+#include "utils.hpp"
 
 namespace logger {
 
