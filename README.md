@@ -76,6 +76,22 @@ open(file);
 This appender writes logs in the special `.log` file,
 path of which was specified during `logger::init` call.
 
+#### File Creation
+
+When you invoke `logger::init()`, you pass path to the logs directory
+as the second argument. This path is processed by internal functions
+and as result new folder for the logs will be created.
+
+New folder pass will be according to this table:
+
+| Existence | Your path | Result folder | Result path |
+| --- | --- | --- | --- |
+| _[exists]_ | `/path/dir/file.cpp` | _[parent path]_ | `/path/dir` |
+| _[exists]_ | `/path/dir` | _[current path]_ | `/path/dir` |
+| _[doesn't exist]_ | `/path/dir/not_exists.cpp` | _[parent path]_ | `/path/dir` |
+| _[doesn't exist]_ | `/path/dir` | _[current path]_ | `/path/dir` |
+| _[doesn't exist]_ | `/path/dir/` | _[path to subdir]_ | `/path/dir/dir` |
+
 ### ConsoleAppender
 
 This appender writes logs in the console stream (`stdout` or `stderr`),
