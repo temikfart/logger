@@ -102,7 +102,7 @@ according to the `Severity` level.
 ## Inspired by
 
 Some ideas of implementation was inspired by
-[PLOG](https://github.com/SergiusTheBest/plog#license) project, which
+[PLOG](https://github.com/SergiusTheBest/plog) project, which
 is more complicated and thoughtful for now :)
 
 ## License
