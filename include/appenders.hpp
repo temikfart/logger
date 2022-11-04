@@ -3,6 +3,8 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <map>
+#include <optional>
 
 #include "record.hpp"
 #include "severity.hpp"
@@ -40,10 +42,16 @@ private:
 class FileAppender : public IAppender {
 public:
     FileAppender() : IAppender(AppenderType::file) {}
-    FileAppender(Severity severity, const fs::path& path)
+    FileAppender(Severity severity, const fs::path& path,
+                 std::ios_base::openmode mode = std::ios::out)
         : IAppender(AppenderType::file, severity) {
-        this->create_dir(path);
-        this->open_file();
+        if (utils::maybe_regular_file(path) && fs::exists(utils::get_parent_path(path))) {
+            this->set_path(path);
+        } else {
+            this->create_dir(path);
+            this->configure_file();
+        }
+        this->open(mode);
     }
 
     void set_path(const fs::path& path) {
@@ -82,12 +90,19 @@ private:
             dir_ = utils::get_parent_path(path).string() + "/" + utils::get_dirname(path);
         fs::create_directories(dir_);
     }
-    void open_file() {
+    void configure_file() {
         utils::Time timestamp;
         auto filepath = utils::to_filepath(timestamp, dir_);
         this->set_path(filepath);
-        this->open();
     }
+};
+
+struct MessageColours {
+    MessageColours() {};
+    MessageColours(const std::string& text_, const std::string& bg_) : text(text_), bg(bg_) {}
+
+    std::string text;
+    std::string bg;
 };
 
 class ConsoleAppender : public IAppender {
@@ -97,28 +112,32 @@ public:
           output_(os_type == cout ? std::cout : std::cerr) {}
 
     void write(const Record& record) override {
-        switch (record.severity()) {
-            case fatal:
-                output_ << "\x1B[97m\x1B[41m";
-                break;
-            case error:
-                output_ << "\x1B[91m";
-                break;
-            case trace:
-                output_ << "\x1B[96m";
-                break;
-            case debug:
-                output_ << "\x1B[97m";
-                break;
-            default:
-                break;
-        }
+        Severity sev = record.severity();
+        MessageColours msg_col = severity_colours_[sev];
+        output_ << msg_col.text << msg_col.bg;
         output_ << record.to_string();
         output_ << "\x1B[0m";
     }
 
+    void set_msg_colours(Severity severity, const MessageColours& msg_cols) {
+        severity_colours_[severity] = msg_cols;
+    }
+    std::optional<MessageColours> msg_colours(Severity severity) const {
+        if (severity == silent)
+            return {};
+        return std::make_optional(severity_colours_.at(severity));
+    }
+
 private:
     std::ostream& output_;
+    std::map<Severity, MessageColours> severity_colours_ = {
+        {fatal, {"\x1B[97m", "\x1B[41m"}},
+        {error, {"\x1B[91m", "\x1B[1m"}},
+        {warning, {"\x1B[93m", "\x1B[1m"}},
+        {info, {"\x1B[0m", "\x1B[0m"}},
+        {trace, {"\x1B[96m", "\x1B[1m"}},
+        {debug, {"\x1B[97m", "\x1B[1m"}}
+    };
 };
 
 } // logger

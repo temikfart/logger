@@ -33,6 +33,13 @@ public:
         if (appenders_.count(AppenderType::console) > 0)
             appenders_[AppenderType::console]->set_severity(severity);
     }
+    void set_console_colour(Severity severity, const MessageColours& msg_cols) {
+        if (appenders_.count(AppenderType::console) > 0) {
+            ConsoleAppender* cons_ap
+                = dynamic_cast<ConsoleAppender*>(appenders_[AppenderType::console]);
+            cons_ap->set_msg_colours(severity, msg_cols);
+        }
+    }
     void set_file_severity(Severity severity) {
         if (appenders_.count(AppenderType::file) > 0)
             appenders_[AppenderType::file]->set_severity(severity);
