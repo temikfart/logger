@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-#include "appenders/appenders.hpp"
+#include "appenders/appender_interface.hpp"
 #include "logger.hpp"
 #include "severity.hpp"
 

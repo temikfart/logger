@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "appenders/appenders.hpp"
+#include "appenders/appender_interface.hpp"
 #include "record.hpp"
 #include "severity.hpp"
 #include "utils.hpp"

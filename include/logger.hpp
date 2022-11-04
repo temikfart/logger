@@ -3,7 +3,7 @@
 #include <iostream>
 #include <map>
 
-#include "appenders/appenders.hpp"
+#include "appenders/appender_interface.hpp"
 #include "appenders/console_appender.hpp"
 #include "appenders/file_appender.hpp"
 #include "record.hpp"

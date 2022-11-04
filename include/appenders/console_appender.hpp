@@ -4,7 +4,7 @@
 #include <map>
 #include <optional>
 
-#include "appenders/appenders.hpp"
+#include "appenders/appender_interface.hpp"
 #include "colours.hpp"
 #include "record.hpp"
 #include "severity.hpp"
