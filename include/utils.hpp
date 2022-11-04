@@ -127,6 +127,7 @@ public:
     Singleton() { instance_ = static_cast<T*>(this); }
     ~Singleton() { instance_ = 0; }
 
+protected:
     static T* get_instance() { return instance_; }
 
 private:
