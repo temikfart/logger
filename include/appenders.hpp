@@ -9,6 +9,7 @@
 #include "record.hpp"
 #include "severity.hpp"
 #include "utils.hpp"
+#include "colours.hpp"
 
 namespace logger {
 
@@ -99,10 +100,11 @@ private:
 
 struct MessageColours {
     MessageColours() {};
-    MessageColours(const std::string& text_, const std::string& bg_) : text(text_), bg(bg_) {}
+    MessageColours(Colour text_col, Colour bg_col)
+    : text(text_col), bg(bg_col) {}
 
-    std::string text;
-    std::string bg;
+    Colour text = common;
+    Colour bg = common;
 };
 
 class ConsoleAppender : public IAppender {
@@ -114,9 +116,9 @@ public:
     void write(const Record& record) override {
         Severity sev = record.severity();
         MessageColours msg_col = severity_colours_[sev];
-        output_ << msg_col.text << msg_col.bg;
+        output_ << to_text_colour(msg_col.text) << to_bg_colour(msg_col.bg);
         output_ << record.to_string();
-        output_ << "\x1B[0m";
+        output_ << to_text_colour(common);
     }
 
     void set_msg_colours(Severity severity, const MessageColours& msg_cols) {
@@ -131,12 +133,12 @@ public:
 private:
     std::ostream& output_;
     std::map<Severity, MessageColours> severity_colours_ = {
-        {fatal, {"\x1B[97m", "\x1B[41m"}},
-        {error, {"\x1B[91m", "\x1B[1m"}},
-        {warning, {"\x1B[93m", "\x1B[1m"}},
-        {info, {"\x1B[0m", "\x1B[0m"}},
-        {trace, {"\x1B[96m", "\x1B[1m"}},
-        {debug, {"\x1B[97m", "\x1B[1m"}}
+        {fatal, {white, red}},
+        {error, {red, common}},
+        {warning, {yellow, common}},
+        {info, {common, common}},
+        {trace, {light_gray, common}},
+        {debug, {white, common}}
     };
 };
 
