@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-#include "appenders.hpp"
+#include "appenders/appender_interface.hpp"
 #include "logger.hpp"
 #include "severity.hpp"
 
@@ -20,8 +20,9 @@ Logger& init(Severity severity, StreamType type) {
     return init(&console_appender);
 }
 Logger& init(Severity severity,
-             const fs::path& path = std::filesystem::current_path()) {
-    static FileAppender file_appender(severity, path);
+             const fs::path& path = std::filesystem::current_path(),
+             std::ios_base::openmode mode = std::ios::out) {
+    static FileAppender file_appender(severity, path, mode);
     return init(&file_appender);
 }
 

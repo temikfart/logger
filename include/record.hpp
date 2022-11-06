@@ -15,7 +15,7 @@ public:
 
     std::string to_string() const {
         std::ostringstream ss;
-        ss << utils::to_string(time_)
+        ss << time_.to_string()
            << " [" << utils::to_upper(logger::to_string(severity_)) << "]"
            << " " << file_
            << " " << func_ << "()"

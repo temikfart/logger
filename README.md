@@ -43,6 +43,39 @@ Now, you can download this repository and manually integrate
     2022-09-25 22:26:16 [INFO] main.cpp main() at line 11: Hello, world!
     2022-09-25 22:26:16 [INFO] main.cpp main() at line 12: Short form
     ```
+    _Notice: you can change timezone for timestamps with_
+    ```C++
+    void utils::Time::set_timzone(int tz);
+    ```
+    _For example for Moscow: `set_timezone(3)`._
+
+## Macros
+
+This tools contains a lot of macros.
+You can choose any _(See file `log.hpp`)_.
+
+The most important and "root" macros are `LOG(severity)` and
+`LOG_IF(condition, severity)`.
+
+| Original macro | Long form | Short form | Message |
+| --- | --- | --- | --- |
+| LOG(logger::fatal) | LOG_FATAL | LOGF | `fatal` error |
+| LOG(logger::error) | LOG_ERROR | LOGE | `error` |
+| LOG(logger::warning) | LOG_WARN | LOGW | `warning` |
+| LOG(logger::info) | LOG_INFO | LOGI | `info`|
+| LOG(logger::trace) | LOG_TRACE | LOGT | `trace` |
+| LOG(logger::debug) | LOG_DEBUG | LOGD | `debug` |
+
+The same table of macros, but with condition:
+
+| Original macro | Long form | Short form | Message |
+| --- | --- | --- | --- |
+| LOG_IF(condition, logger::fatal) | LOG_FATAL_IF(condition) | LOGF_IF(condition) | `fatal` error |
+| LOG_IF(condition, logger::error) | LOG_ERROR_IF(condition) | LOGE_IF(condition) | `error` |
+| LOG_IF(condition, logger::warning) | LOG_WARN_IF(condition) | LOGW_IF(condition) | `warning` |
+| LOG_IF(condition, logger::info) | LOG_INFO_IF(condition) | LOGI_IF(condition) | `info`|
+| LOG_IF(condition, logger::trace) | LOG_TRACE_IF(condition) | LOGT_IF(condition) | `trace` |
+| LOG_IF(condition, logger::debug) | LOG_DEBUG_IF(condition) | LOGD_IF(condition) | `debug` |
 
 ## Appenders
 You can write logs in the several places at the same time.
@@ -78,11 +111,12 @@ path of which was specified during `logger::init` call.
 
 #### File Creation
 
-When you invoke `logger::init()`, you pass path to the logs directory
-as the second argument. This path is processed by internal functions
-and as result new folder for the logs will be created.
+When you invoke `logger::init()`, you pass path to the log's directory
+or to the desired regular file as the second argument.
+This path is processed by internal functions and as result 
+new folder for the logs will be created.
 
-New folder pass will be according to this table:
+New folder path will be according to this table:
 
 | Existence | Your path | Result folder | Result path |
 | --- | --- | --- | --- |
@@ -99,10 +133,38 @@ which was specified during `logger::init` call.
 Logs recorded with the `ConsoleAppender` have special colours 
 according to the `Severity` level.
 
+You can colour every message with special severity as you want.
+Just use method `set_console_colour` in the `Logger` class:
+```C++
+void set_console_colour(Severity severity, const MessageColours& msg_cols);
+```
+where `MessageColours` is a struct, which consist of two colours:
+for the text and its background.
+```C++
+struct MessageColours {
+    Colour text;
+    Colour bg;
+};
+```
+
+Also, you can turn coloured output off, just use the following methods:
+```C++
+void turn_colours_on();
+void turn_colours_off();
+```
+
+#### Example:
+```C++
+logger::Logger::get()->set_console_colour(logger::info,
+                                          {logger::yellow, logger::common});
+```
+where `logger::common` equals to "without colour"
+(transparent background or common text colour).
+
 ## Inspired by
 
 Some ideas of implementation was inspired by
-[PLOG](https://github.com/SergiusTheBest/plog#license) project, which
+[PLOG](https://github.com/SergiusTheBest/plog) project, which
 is more complicated and thoughtful for now :)
 
 ## License

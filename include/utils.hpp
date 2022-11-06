@@ -16,12 +16,33 @@ using TimePoint = std::chrono::time_point<SysClock>;
 using MilliSec = std::chrono::milliseconds;
 
 static const int MS_IN_SEC = 1000;
+static const int SEC_IN_HOUR = 3600;
 
 struct Time {
-    Time() : timestamp(SysClock::now()) {}
+    Time() : timestamp_(SysClock::now()) {}
 
-    const TimePoint timestamp;
+    static void set_timezone(int tz) {
+        if (0 <= tz && tz <= 23)
+            timezone_ = tz;
+    }
+    static int timezone() { return timezone_; }
+
+    std::string to_string() const {
+        auto tse = std::chrono::duration_cast<MilliSec>(timestamp_.time_since_epoch());
+        int ms = (int) (tse.count() % MS_IN_SEC);
+        auto itt = SysClock::to_time_t(timestamp_) + Time::timezone() * SEC_IN_HOUR;
+        std::ostringstream ss;
+        ss << std::put_time(gmtime(&itt), "%F %T.")
+           << std::setw(3) << std::setfill('0') << ms;
+        return ss.str();
+    }
+
+private:
+    const TimePoint timestamp_;
+    static int timezone_;
 };
+
+int Time::timezone_ = 0;
 
 std::string remove_linebreaks(const std::string& str) {
     return str.substr(0, str.rfind('\n'));
@@ -30,17 +51,8 @@ std::string to_upper(std::string str) {
     std::transform(str.begin(), str.end(), str.begin(), toupper);
     return str;
 }
-std::string to_string(const Time& time) {
-    auto tse = std::chrono::duration_cast<MilliSec>(time.timestamp.time_since_epoch());
-    int ms = (int) (tse.count() % MS_IN_SEC);
-    auto itt = SysClock::to_time_t(time.timestamp);
-    std::ostringstream ss;
-    ss << std::put_time(gmtime(&itt), "%F %T.")
-       << std::setw(3) << std::setfill('0') << ms;
-    return ss.str();
-}
 std::string to_filepath(const Time& time, const fs::path& dir) {
-    auto filename = to_string(time);
+    auto filename = time.to_string();
     std::replace_if(filename.begin(), filename.end(),
                     [](auto& c) { return (c == ' ' || c == ':'); }, '-');
     filename = filename.substr(0, filename.rfind('.'));
@@ -63,7 +75,7 @@ fs::path get_parent_path(const fs::path& path) {
     if (fs::exists(path) || path.string().empty())
         return path.parent_path();
 
-    auto str = path.string();
+    std::string str = path.string();
     unsigned length = str.length();
     bool end = false;
 
@@ -76,6 +88,25 @@ fs::path get_parent_path(const fs::path& path) {
     while (length > 0 && str[length - 1] != '/') length--;
     if (length > 0 && str[length - 1] == '/') length--;
     return str.substr(0, length);
+}
+bool maybe_regular_file(const fs::path& path) {
+    if (path.empty())
+        return false;
+    if (fs::exists(path))
+        return fs::is_regular_file(path);
+
+    std::string str = path.string();
+    unsigned length = str.length();
+
+    if (str[length - 1] == '/') length--;
+    if (str[length - 1] == '.') return false;
+
+    // remove slashes
+    while (length > 0 && str[length - 1] == '/') length--;
+    // remove symbols after the dot or slash
+    while (length > 0 && std::isalpha(str[length - 1])) length--;
+
+    return (str[length - 1] == '.');
 }
 
 class NonCopyable {
@@ -96,6 +127,7 @@ public:
     Singleton() { instance_ = static_cast<T*>(this); }
     ~Singleton() { instance_ = 0; }
 
+protected:
     static T* get_instance() { return instance_; }
 
 private:
