@@ -42,6 +42,20 @@ public:
             cons_ap->set_msg_colours(severity, msg_cols);
         }
     }
+    void turn_console_colours_on() {
+        if (appenders_.count(AppenderType::console) > 0) {
+            ConsoleAppender* cons_ap
+                = dynamic_cast<ConsoleAppender*>(appenders_[AppenderType::console]);
+            cons_ap->turn_colours_on();
+        }
+    }
+    void turn_console_colours_off() {
+        if (appenders_.count(AppenderType::console) > 0) {
+            ConsoleAppender* cons_ap
+                = dynamic_cast<ConsoleAppender*>(appenders_[AppenderType::console]);
+            cons_ap->turn_colours_off();
+        }
+    }
     void set_file_severity(Severity severity) {
         if (appenders_.count(AppenderType::file) > 0)
             appenders_[AppenderType::file]->set_severity(severity);

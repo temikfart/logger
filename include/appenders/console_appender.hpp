@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <map>
-#include <optional>
 
 #include "appenders/appender_interface.hpp"
 #include "colours.hpp"
@@ -34,7 +33,8 @@ public:
     void write(const Record& record) override {
         Severity sev = record.severity();
         MessageColours msg_col = severity_colours_[sev];
-        output_ << to_text_colour(msg_col.text) << to_bg_colour(msg_col.bg);
+        if (coloured)
+            output_ << to_text_colour(msg_col.text) << to_bg_colour(msg_col.bg);
         output_ << record.to_string();
         output_ << to_text_colour(common);
     }
@@ -42,14 +42,12 @@ public:
     void set_msg_colours(Severity severity, const MessageColours& msg_cols) {
         severity_colours_[severity] = msg_cols;
     }
-    std::optional<MessageColours> msg_colours(Severity severity) const {
-        if (severity == silent)
-            return {};
-        return std::make_optional(severity_colours_.at(severity));
-    }
+    void turn_colours_on() { coloured = true; }
+    void turn_colours_off() { coloured = false; }
 
 private:
     std::ostream& output_;
+    bool coloured = true;
     std::map<Severity, MessageColours> severity_colours_ = {
         {fatal, {white, red}},
         {error, {red, common}},
