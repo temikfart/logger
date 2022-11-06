@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <map>
+#include <optional>
 
 #include "appenders/appender_interface.hpp"
 #include "appenders/console_appender.hpp"
@@ -33,7 +34,12 @@ public:
     }
     void set_console_severity(Severity severity) {
         if (appenders_.count(AppenderType::console) > 0)
-            appenders_[AppenderType::console]->set_severity(severity);
+            appenders_.at(AppenderType::console)->set_severity(severity);
+    }
+    std::optional<Severity> console_severity() const {
+        if (appenders_.count(AppenderType::console) > 0)
+            return appenders_.at(AppenderType::console)->severity();
+        return {};
     }
     void set_console_colour(Severity severity, const MessageColours& msg_cols) {
         if (appenders_.count(AppenderType::console) > 0) {
@@ -58,7 +64,12 @@ public:
     }
     void set_file_severity(Severity severity) {
         if (appenders_.count(AppenderType::file) > 0)
-            appenders_[AppenderType::file]->set_severity(severity);
+            appenders_.at(AppenderType::file)->set_severity(severity);
+    }
+    std::optional<Severity> file_severity() const {
+        if (appenders_.count(AppenderType::file) > 0)
+            return appenders_.at(AppenderType::file)->severity();
+        return {};
     }
     void operator+=(const Record& r) { Logger::get()->record(r); }
     ~Logger() = default;
