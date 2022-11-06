@@ -147,6 +147,12 @@ struct MessageColours {
 };
 ```
 
+Also, you can turn coloured output off, just use the following methods:
+```C++
+void turn_colours_on();
+void turn_colours_off();
+```
+
 #### Example:
 ```C++
 logger::Logger::get()->set_console_colour(logger::info,
