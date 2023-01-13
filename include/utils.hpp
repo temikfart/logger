@@ -27,13 +27,17 @@ struct Time {
     }
     static int timezone() { return timezone_; }
 
-    std::string to_string() const {
+    std::string to_string(bool is_ISO_format = false) const {
         auto tse = std::chrono::duration_cast<MilliSec>(timestamp_.time_since_epoch());
         int ms = (int) (tse.count() % MS_IN_SEC);
         auto itt = SysClock::to_time_t(timestamp_) + Time::timezone() * SEC_IN_HOUR;
         std::ostringstream ss;
-        ss << std::put_time(gmtime(&itt), "%F %T.")
-           << std::setw(3) << std::setfill('0') << ms;
+        if (is_ISO_format)
+            ss << std::put_time(gmtime(&itt), "%FT%T.")
+               << std::setw(3) << std::setfill('0') << ms << "Z";
+        else
+            ss << std::put_time(gmtime(&itt), "%F %T.")
+               << std::setw(3) << std::setfill('0') << ms;
         return ss.str();
     }
 

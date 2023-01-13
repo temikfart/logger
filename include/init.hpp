@@ -3,6 +3,10 @@
 #include <filesystem>
 
 #include "appenders/appender_interface.hpp"
+#include "formatters/func_msg_formatter.hpp"
+#include "formatters/json_formatter.hpp"
+#include "formatters/just_msg_formatter.hpp"
+#include "formatters/text_formatter.hpp"
 #include "logger.hpp"
 #include "severity.hpp"
 
@@ -15,15 +19,26 @@ Logger& init(IAppender* appender = nullptr) {
     return appender ? logger.add_appender(appender) : logger;
 }
 
+template<class Formatter>
 Logger& init(Severity severity, StreamType type) {
-    static ConsoleAppender console_appender(severity, type);
+    static ConsoleAppender<Formatter> console_appender(severity, type);
     return init(&console_appender);
+}
+Logger& init(Severity severity, StreamType type) {
+    return init<TXTFormatter>(severity, type);
+}
+
+template<class Formatter>
+Logger& init(Severity severity,
+             const fs::path& path = std::filesystem::current_path(),
+             std::ios_base::openmode mode = std::ios::out) {
+    static FileAppender<Formatter> file_appender(severity, path, mode);
+    return init(&file_appender);
 }
 Logger& init(Severity severity,
              const fs::path& path = std::filesystem::current_path(),
              std::ios_base::openmode mode = std::ios::out) {
-    static FileAppender file_appender(severity, path, mode);
-    return init(&file_appender);
+    return init<TXTFormatter>(severity, path, mode);
 }
 
 } // logger

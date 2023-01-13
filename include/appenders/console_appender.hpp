@@ -24,6 +24,7 @@ struct MessageColours {
     Colour bg = common;
 };
 
+template<class Formatter>
 class ConsoleAppender : public IAppender {
 public:
     ConsoleAppender(Severity severity, StreamType os_type)
@@ -31,11 +32,12 @@ public:
           output_(os_type == cout ? std::cout : std::cerr) {}
 
     void write(const Record& record) override {
-        Severity sev = record.severity();
+        // TODO: come up how to make JSON array, if JSONFormatter is used as template.
+        Severity sev = record.severity;
         MessageColours msg_col = severity_colours_[sev];
         if (coloured)
             output_ << to_text_colour(msg_col.text) << to_bg_colour(msg_col.bg);
-        output_ << record.to_string();
+        output_ << Formatter::format(record);
         output_ << to_text_colour(common);
     }
 

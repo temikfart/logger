@@ -29,7 +29,7 @@ public:
     }
     void record(const Record& r) {
         for (auto[type, ap]: appenders_)
-            if (ap->severity() >= r.severity())
+            if (ap->severity() >= r.severity)
                 ap->write(r);
     }
     void set_console_severity(Severity severity) {
@@ -41,24 +41,27 @@ public:
             return appenders_.at(AppenderType::console)->severity();
         return {};
     }
+    template<class Formatter>
     void set_console_colour(Severity severity, const MessageColours& msg_cols) {
         if (appenders_.count(AppenderType::console) > 0) {
-            ConsoleAppender* cons_ap
-                = dynamic_cast<ConsoleAppender*>(appenders_[AppenderType::console]);
+            ConsoleAppender<Formatter>* cons_ap
+                = dynamic_cast<ConsoleAppender<Formatter>*>(appenders_[AppenderType::console]);
             cons_ap->set_msg_colours(severity, msg_cols);
         }
     }
+    template<class Formatter>
     void turn_console_colours_on() {
         if (appenders_.count(AppenderType::console) > 0) {
-            ConsoleAppender* cons_ap
-                = dynamic_cast<ConsoleAppender*>(appenders_[AppenderType::console]);
+            ConsoleAppender<Formatter>* cons_ap
+                = dynamic_cast<ConsoleAppender<Formatter>*>(appenders_[AppenderType::console]);
             cons_ap->turn_colours_on();
         }
     }
+    template<class Formatter>
     void turn_console_colours_off() {
         if (appenders_.count(AppenderType::console) > 0) {
-            ConsoleAppender* cons_ap
-                = dynamic_cast<ConsoleAppender*>(appenders_[AppenderType::console]);
+            ConsoleAppender<Formatter>* cons_ap
+                = dynamic_cast<ConsoleAppender<Formatter>*>(appenders_[AppenderType::console]);
             cons_ap->turn_colours_off();
         }
     }

@@ -13,6 +13,7 @@ namespace logger {
 
 namespace fs = std::filesystem;
 
+template<class Formatter>
 class FileAppender : public IAppender {
 public:
     FileAppender() : IAppender(AppenderType::file) {}
@@ -48,7 +49,7 @@ public:
         return (*this);
     }
     void write(const Record& record) override {
-        output_ << record.to_string();
+        output_ << Formatter::format(record);
     }
 
 private:
