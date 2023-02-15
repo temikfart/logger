@@ -5,7 +5,7 @@
 #include "appenders/appender_interface.hpp"
 #include "formatters/func_msg_formatter.hpp"
 #include "formatters/json_formatter.hpp"
-#include "formatters/just_msg_formatter.hpp"
+#include "formatters/only_msg_formatter.hpp"
 #include "formatters/text_formatter.hpp"
 #include "logger.hpp"
 #include "severity.hpp"
@@ -17,7 +17,7 @@ namespace logger {
 Logger& init(IAppender* appender = nullptr) {
     static Logger logger;
     return appender ? logger.add_appender(appender) : logger;
-}
+}j
 
 template<class Formatter>
 Logger& init(Severity severity, StreamType type) {

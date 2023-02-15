@@ -4,6 +4,7 @@
 #include <map>
 
 #include "appenders/appender_interface.hpp"
+#include "formatters/formatter_interface.hpp"
 #include "colours.hpp"
 #include "record.hpp"
 #include "severity.hpp"
@@ -30,7 +31,6 @@ public:
     ConsoleAppender(Severity severity, StreamType os_type)
         : IAppender(AppenderType::console, severity),
           output_(os_type == cout ? std::cout : std::cerr) {}
-
     void write(const Record& record) override {
         // TODO: come up how to make JSON array, if JSONFormatter is used as template.
         Severity sev = record.severity;
@@ -40,12 +40,12 @@ public:
         output_ << Formatter::format(record);
         output_ << to_text_colour(common);
     }
-
     void set_msg_colours(Severity severity, const MessageColours& msg_cols) {
         severity_colours_[severity] = msg_cols;
     }
     void turn_colours_on() { coloured = true; }
     void turn_colours_off() { coloured = false; }
+    FormatterType formatter_type() const { return Formatter::type(); }
 
 private:
     std::ostream& output_;

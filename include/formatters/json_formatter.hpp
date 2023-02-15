@@ -1,5 +1,6 @@
 #pragma once
 
+#include "formatter_interface.hpp"
 #include "record.hpp"
 #include <sstream>
 
@@ -7,6 +8,7 @@ namespace logger {
 
 class JSONFormatter {
 public:
+    JSONFormatter() : type_(FormatterType::JSON) {}
     static std::string format(const Record& r) {
         std::ostringstream ss;
         ss << "{"

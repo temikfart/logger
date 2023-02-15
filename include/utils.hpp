@@ -19,6 +19,7 @@ static const int MS_IN_SEC = 1000;
 static const int SEC_IN_HOUR = 3600;
 
 struct Time {
+public:
     Time() : timestamp_(SysClock::now()) {}
 
     static void set_timezone(int tz) {
@@ -119,7 +120,7 @@ public:
     NonCopyable(NonCopyable&& rhs) = delete;
     NonCopyable& operator=(const NonCopyable& rhs) = delete;
     NonCopyable& operator=(NonCopyable&& rhs) = delete;
-    ~NonCopyable() = default;
+    ~NonCopyable() = default;()
 
 protected:
     NonCopyable() = default;
