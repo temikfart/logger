@@ -21,7 +21,6 @@ public:
     Severity severity() const { return severity_; }
     void set_severity(Severity severity) { severity_ = severity; }
     AppenderType type() const { return appender_type_; }
-    virtual formatter_type() const = 0;
 
 private:
     Severity severity_ = silent;

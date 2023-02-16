@@ -5,9 +5,9 @@
 
 namespace logger {
 
-class TXTFormatter : IFormatter {
+class TXTFormatter : public IFormatter {
 public:
-    TXTFormatter() : type_(FormatterType::TXT) {}
+    TXTFormatter() : IFormatter(FormatterType::txt) {}
     static std::string format(const Record& r) {
         return r.to_string();
     }

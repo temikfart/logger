@@ -4,7 +4,6 @@
 #include <map>
 
 #include "appenders/appender_interface.hpp"
-#include "formatters/formatter_interface.hpp"
 #include "colours.hpp"
 #include "record.hpp"
 #include "severity.hpp"

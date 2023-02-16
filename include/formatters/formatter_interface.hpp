@@ -1,22 +1,24 @@
 #pragma once
 
+#include "record.hpp"
+
 namespace logger {
 
 enum FormatterType {
 	funcMessages,
-	JSON,
+	json,
 	onlyMessages,
-	TXT,
-}
+	txt,
+};
 
 class IFormatter {
 public:
-	IFormatter(FormatterType t) : type(t) {}
-	virtual static std::string format(const Record& r) = 0;
-	static FormatterType type() const { return type_; }
+	IFormatter(FormatterType t) : type_(t) {}
+	static std::string format(const Record& r);
+	FormatterType type() const { return type_; }
 
-private:
+protected:
 	FormatterType type_;
-}
+};
 
 } // logger

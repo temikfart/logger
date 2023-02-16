@@ -5,9 +5,9 @@
 
 namespace logger {
 
-class OnlyMessagesFormatter {
+class OnlyMessagesFormatter : public IFormatter {
 public:
-    OnlyMessagesFormatter() : type_(FormatterType::onlyMessages) {}
+    OnlyMessagesFormatter() : IFormatter(FormatterType::onlyMessages) {}
     static std::string format(const Record& r) {
         return r.msg.str() + "\n";
     }

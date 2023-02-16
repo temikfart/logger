@@ -6,18 +6,18 @@
 
 namespace logger {
 
-class JSONFormatter {
+class JSONFormatter : public IFormatter {
 public:
-    JSONFormatter() : type_(FormatterType::JSON) {}
+    JSONFormatter() : IFormatter(FormatterType::json) {}
     static std::string format(const Record& r) {
         std::ostringstream ss;
         ss << "{"
-           << "\"timestamp\":\"" << r.timestamp.to_string(true) << "\","
-           << "\"severity\":\"" << utils::to_upper(logger::to_string(r.severity)) << "\","
-           << "\"file\":\"" << r.file << "\","
-           << "\"function\":\"" << r.func << "\","
-           << "\"line\":\"" << r.line << "\","
-           << "\"message\":\"" << utils::remove_linebreaks(r.msg.str()) << "\""
+           << R"("timestamp":")" << r.timestamp.to_string(true) << "\","
+           << R"("severity":")" << utils::to_upper(logger::to_string(r.severity)) << "\","
+           << R"("file":")" << r.file << "\","
+           << R"("function":")" << r.func << "\","
+           << R"("line":")" << r.line << "\","
+           << R"("message":")" << utils::remove_linebreaks(r.msg.str()) << "\""
            << "}" << std::endl;
         return ss.str();
     }

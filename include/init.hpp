@@ -17,7 +17,7 @@ namespace logger {
 Logger& init(IAppender* appender = nullptr) {
     static Logger logger;
     return appender ? logger.add_appender(appender) : logger;
-}j
+}
 
 template<class Formatter>
 Logger& init(Severity severity, StreamType type) {
@@ -30,13 +30,13 @@ Logger& init(Severity severity, StreamType type) {
 
 template<class Formatter>
 Logger& init(Severity severity,
-             const fs::path& path = std::filesystem::current_path(),
+             const fs::path& path = fs::current_path(),
              std::ios_base::openmode mode = std::ios::out) {
     static FileAppender<Formatter> file_appender(severity, path, mode);
     return init(&file_appender);
 }
 Logger& init(Severity severity,
-             const fs::path& path = std::filesystem::current_path(),
+             const fs::path& path = fs::current_path(),
              std::ios_base::openmode mode = std::ios::out) {
     return init<TXTFormatter>(severity, path, mode);
 }

@@ -120,7 +120,7 @@ public:
     NonCopyable(NonCopyable&& rhs) = delete;
     NonCopyable& operator=(const NonCopyable& rhs) = delete;
     NonCopyable& operator=(NonCopyable&& rhs) = delete;
-    ~NonCopyable() = default;()
+    ~NonCopyable() = default;
 
 protected:
     NonCopyable() = default;

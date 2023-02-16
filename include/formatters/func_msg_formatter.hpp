@@ -6,9 +6,9 @@
 
 namespace logger {
 
-class FuncMessagesFormatter {
+class FuncMessagesFormatter : public IFormatter {
 public:
-    FuncMessagesFormatter() : type_(FormatterType::funcMessages) {}
+    FuncMessagesFormatter() : IFormatter(FormatterType::funcMessages) {}
     static std::string format(const Record& r) {
         std::ostringstream ss;
         ss << r.func << "@" << r.line << ": " << r.msg.str() << std::endl;
