@@ -1,16 +1,16 @@
 #pragma once
 
-#include "formatter_interface.hpp"
+#include "formatters_types.hpp"
 #include "record.hpp"
 
 namespace logger {
 
-class TXTFormatter : public IFormatter {
+class TXTFormatter {
 public:
-    TXTFormatter() : IFormatter(FormatterType::txt) {}
     static std::string format(const Record& r) {
         return r.to_string();
     }
+    static FormatterType type() { return FormatterType::txt; }
 };
 
 } // logger

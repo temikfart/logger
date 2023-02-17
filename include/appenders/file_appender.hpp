@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "formatters/formatters_types.hpp"
 #include "appenders/appender_interface.hpp"
 #include "record.hpp"
 #include "severity.hpp"
@@ -49,7 +50,20 @@ public:
         return (*this);
     }
     void write(const Record& record) override {
+        static bool is_first_record = true;
+        if (Formatter::type() == FormatterType::json) {
+            if (is_first_record) {
+                is_first_record = false;
+                output_ << "[\n";
+            } else {
+                output_ << ",\n";
+            }
+        }
         output_ << Formatter::format(record);
+    }
+    ~FileAppender() override {
+        if (Formatter::type() == FormatterType::json)
+            output_ << "\n]" << std::endl;
     }
 
 private:

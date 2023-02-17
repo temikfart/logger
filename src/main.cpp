@@ -1,8 +1,8 @@
 #include "log.hpp"
 
 int main() {
-    logger::init<logger::TXTFormatter>(logger::Severity::info, "../log");
-    logger::init<logger::TXTFormatter>(logger::Severity::debug, logger::cout);
+    logger::init<logger::JSONFormatter>(logger::Severity::info, "../log");
+    logger::init<logger::JSONFormatter>(logger::Severity::debug, logger::cout);
 
     LOG(logger::info) << "Hello, world!";
     LOGI << "Short form";

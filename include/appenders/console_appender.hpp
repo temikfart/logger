@@ -3,6 +3,7 @@
 #include <iostream>
 #include <map>
 
+#include "formatters/formatters_types.hpp"
 #include "appenders/appender_interface.hpp"
 #include "colours.hpp"
 #include "record.hpp"
@@ -22,7 +23,16 @@ public:
         : IAppender(AppenderType::console, severity),
           output_(os_type == cout ? std::cout : std::cerr) {}
     void write(const Record& record) override {
-        // TODO: come up how to make JSON array, if JSONFormatter is used as template.
+        static bool is_first_record = true;
+        if (Formatter::type() == FormatterType::json) {
+            if (is_first_record) {
+                is_first_record = false;
+                output_ << "[\n";
+            } else {
+                output_ << ",\n";
+            }
+        }
+
         Severity sev = record.severity;
         MessageColours msg_col = severity_colours_[sev];
         if (coloured)
@@ -36,6 +46,10 @@ public:
     void turn_colours_on() override { coloured = true; }
     void turn_colours_off() override { coloured = false; }
     FormatterType formatter_type() const { return Formatter::type(); }
+    ~ConsoleAppender() override {
+        if (Formatter::type() == FormatterType::json)
+            output_ << "\n]" << std::endl;
+    }
 
 private:
     std::ostream& output_;
