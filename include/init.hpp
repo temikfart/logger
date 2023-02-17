@@ -2,12 +2,12 @@
 
 #include <filesystem>
 
-#include "appenders/appender_interface.hpp"
-#include "formatters/func_msg_formatter.hpp"
-#include "formatters/json_formatter.hpp"
-#include "formatters/only_msg_formatter.hpp"
-#include "formatters/text_formatter.hpp"
+#include "appender_interface.hpp"
+#include "func_msg_formatter.hpp"
+#include "json_formatter.hpp"
 #include "logger.hpp"
+#include "only_msg_formatter.hpp"
+#include "text_formatter.hpp"
 #include "severity.hpp"
 
 namespace fs = std::filesystem;

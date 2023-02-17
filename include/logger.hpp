@@ -4,9 +4,9 @@
 #include <map>
 #include <optional>
 
-#include "appenders/appender_interface.hpp"
-#include "appenders/console_appender.hpp"
-#include "appenders/file_appender.hpp"
+#include "appender_interface.hpp"
+#include "console_appender.hpp"
+#include "file_appender.hpp"
 #include "record.hpp"
 #include "severity.hpp"
 #include "utils.hpp"

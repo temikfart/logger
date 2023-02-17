@@ -4,8 +4,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "formatters/formatters_types.hpp"
-#include "appenders/appender_interface.hpp"
+#include "appender_interface.hpp"
+#include "formatters_types.hpp"
 #include "record.hpp"
 #include "severity.hpp"
 #include "utils.hpp"

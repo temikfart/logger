@@ -3,9 +3,9 @@
 #include <iostream>
 #include <map>
 
-#include "formatters/formatters_types.hpp"
-#include "appenders/appender_interface.hpp"
+#include "appender_interface.hpp"
 #include "colours.hpp"
+#include "formatters_types.hpp"
 #include "record.hpp"
 #include "severity.hpp"
 
@@ -38,14 +38,13 @@ public:
         if (coloured)
             output_ << to_text_colour(msg_col.text) << to_bg_colour(msg_col.bg);
         output_ << Formatter::format(record);
-        output_ << to_text_colour(common);
+        output_ << to_text_colour(common) << to_bg_colour(common);
     }
     void set_colours(Severity severity, const MessageColours& msg_cols) override {
         severity_colours_[severity] = msg_cols;
     }
     void turn_colours_on() override { coloured = true; }
     void turn_colours_off() override { coloured = false; }
-    FormatterType formatter_type() const { return Formatter::type(); }
     ~ConsoleAppender() override {
         if (Formatter::type() == FormatterType::json)
             output_ << "\n]" << std::endl;
