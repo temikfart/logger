@@ -1,5 +1,6 @@
 #pragma once
 
+#include "colours.hpp"
 #include "record.hpp"
 #include "severity.hpp"
 
@@ -21,6 +22,9 @@ public:
     Severity severity() const { return severity_; }
     void set_severity(Severity severity) { severity_ = severity; }
     AppenderType type() const { return appender_type_; }
+    virtual void set_colours(Severity severity, const MessageColours& msg_cols) {}
+    virtual void turn_colours_on() {}
+    virtual void turn_colours_off() {}
 
 private:
     Severity severity_ = silent;

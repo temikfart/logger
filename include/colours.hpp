@@ -11,6 +11,15 @@ enum Colour {
     red
 };
 
+struct MessageColours {
+    MessageColours() = default;
+    MessageColours(Colour text_col, Colour bg_col)
+        : text(text_col), bg(bg_col) {}
+
+    Colour text = common;
+    Colour bg = common;
+};
+
 std::string to_text_colour(Colour col) {
     switch (col) {
         case white: return "\x1B[97m";

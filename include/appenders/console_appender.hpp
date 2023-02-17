@@ -15,15 +15,6 @@ enum StreamType {
     cerr
 };
 
-struct MessageColours {
-    MessageColours() = default;
-    MessageColours(Colour text_col, Colour bg_col)
-        : text(text_col), bg(bg_col) {}
-
-    Colour text = common;
-    Colour bg = common;
-};
-
 template<class Formatter>
 class ConsoleAppender : public IAppender {
 public:
@@ -39,11 +30,11 @@ public:
         output_ << Formatter::format(record);
         output_ << to_text_colour(common);
     }
-    void set_msg_colours(Severity severity, const MessageColours& msg_cols) {
+    void set_colours(Severity severity, const MessageColours& msg_cols) override {
         severity_colours_[severity] = msg_cols;
     }
-    void turn_colours_on() { coloured = true; }
-    void turn_colours_off() { coloured = false; }
+    void turn_colours_on() override { coloured = true; }
+    void turn_colours_off() override { coloured = false; }
     FormatterType formatter_type() const { return Formatter::type(); }
 
 private:
