@@ -3,8 +3,9 @@
 #include <iostream>
 #include <map>
 
-#include "appenders/appender_interface.hpp"
+#include "appender_interface.hpp"
 #include "colours.hpp"
+#include "formatters_types.hpp"
 #include "record.hpp"
 #include "severity.hpp"
 
@@ -15,35 +16,39 @@ enum StreamType {
     cerr
 };
 
-struct MessageColours {
-    MessageColours() = default;
-    MessageColours(Colour text_col, Colour bg_col)
-        : text(text_col), bg(bg_col) {}
-
-    Colour text = common;
-    Colour bg = common;
-};
-
+template<class Formatter>
 class ConsoleAppender : public IAppender {
 public:
     ConsoleAppender(Severity severity, StreamType os_type)
         : IAppender(AppenderType::console, severity),
           output_(os_type == cout ? std::cout : std::cerr) {}
-
     void write(const Record& record) override {
-        Severity sev = record.severity();
+        static bool is_first_record = true;
+        if (Formatter::type() == FormatterType::json) {
+            if (is_first_record) {
+                is_first_record = false;
+                output_ << "[\n";
+            } else {
+                output_ << ",\n";
+            }
+        }
+
+        Severity sev = record.severity;
         MessageColours msg_col = severity_colours_[sev];
         if (coloured)
             output_ << to_text_colour(msg_col.text) << to_bg_colour(msg_col.bg);
-        output_ << record.to_string();
-        output_ << to_text_colour(common);
+        output_ << Formatter::format(record);
+        output_ << to_text_colour(common) << to_bg_colour(common);
     }
-
-    void set_msg_colours(Severity severity, const MessageColours& msg_cols) {
+    void set_colours(Severity severity, const MessageColours& msg_cols) override {
         severity_colours_[severity] = msg_cols;
     }
-    void turn_colours_on() { coloured = true; }
-    void turn_colours_off() { coloured = false; }
+    void turn_colours_on() override { coloured = true; }
+    void turn_colours_off() override { coloured = false; }
+    ~ConsoleAppender() override {
+        if (Formatter::type() == FormatterType::json)
+            output_ << "\n]" << std::endl;
+    }
 
 private:
     std::ostream& output_;

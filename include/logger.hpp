@@ -4,9 +4,9 @@
 #include <map>
 #include <optional>
 
-#include "appenders/appender_interface.hpp"
-#include "appenders/console_appender.hpp"
-#include "appenders/file_appender.hpp"
+#include "appender_interface.hpp"
+#include "console_appender.hpp"
+#include "file_appender.hpp"
 #include "record.hpp"
 #include "severity.hpp"
 #include "utils.hpp"
@@ -27,51 +27,40 @@ public:
             appenders_[appender->type()] = appender;
         return *this;
     }
-    void record(const Record& r) {
+    void write(const Record& r) {
         for (auto[type, ap]: appenders_)
-            if (ap->severity() >= r.severity())
+            if (ap->severity() >= r.severity)
                 ap->write(r);
     }
-    void set_console_severity(Severity severity) {
-        if (appenders_.count(AppenderType::console) > 0)
-            appenders_.at(AppenderType::console)->set_severity(severity);
+
+    void set_severity(Severity severity) {
+        for (auto[type, ap]: appenders_)
+            ap->set_severity(severity);
     }
-    std::optional<Severity> console_severity() const {
-        if (appenders_.count(AppenderType::console) > 0)
-            return appenders_.at(AppenderType::console)->severity();
+    void set_severity(Severity severity, AppenderType type) {
+        if (appenders_.count(type) > 0)
+            appenders_.at(type)->set_severity(severity);
+    }
+    std::optional<Severity> severity(AppenderType type) {
+        if (appenders_.count(type) > 0)
+            return appenders_.at(type)->severity();
         return {};
     }
-    void set_console_colour(Severity severity, const MessageColours& msg_cols) {
-        if (appenders_.count(AppenderType::console) > 0) {
-            ConsoleAppender* cons_ap
-                = dynamic_cast<ConsoleAppender*>(appenders_[AppenderType::console]);
-            cons_ap->set_msg_colours(severity, msg_cols);
-        }
+
+    void change_colours(Severity severity, const MessageColours& msg_cols) {
+        if (appenders_.count(AppenderType::console) > 0)
+            appenders_.at(AppenderType::console)->set_colours(severity, msg_cols);
     }
-    void turn_console_colours_on() {
-        if (appenders_.count(AppenderType::console) > 0) {
-            ConsoleAppender* cons_ap
-                = dynamic_cast<ConsoleAppender*>(appenders_[AppenderType::console]);
-            cons_ap->turn_colours_on();
-        }
+    void turn_colours_on() {
+        if (appenders_.count(AppenderType::console) > 0)
+            appenders_.at(AppenderType::console)->turn_colours_on();
     }
-    void turn_console_colours_off() {
-        if (appenders_.count(AppenderType::console) > 0) {
-            ConsoleAppender* cons_ap
-                = dynamic_cast<ConsoleAppender*>(appenders_[AppenderType::console]);
-            cons_ap->turn_colours_off();
-        }
+    void turn_colours_off() {
+        if (appenders_.count(AppenderType::console) > 0)
+            appenders_.at(AppenderType::console)->turn_colours_off();
     }
-    void set_file_severity(Severity severity) {
-        if (appenders_.count(AppenderType::file) > 0)
-            appenders_.at(AppenderType::file)->set_severity(severity);
-    }
-    std::optional<Severity> file_severity() const {
-        if (appenders_.count(AppenderType::file) > 0)
-            return appenders_.at(AppenderType::file)->severity();
-        return {};
-    }
-    void operator+=(const Record& r) { Logger::get()->record(r); }
+
+    void operator+=(const Record& r) { Logger::get()->write(r); }
     ~Logger() = default;
 
 private:

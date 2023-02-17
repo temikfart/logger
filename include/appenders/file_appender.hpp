@@ -4,7 +4,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "appenders/appender_interface.hpp"
+#include "appender_interface.hpp"
+#include "formatters_types.hpp"
 #include "record.hpp"
 #include "severity.hpp"
 #include "utils.hpp"
@@ -13,6 +14,7 @@ namespace logger {
 
 namespace fs = std::filesystem;
 
+template<class Formatter>
 class FileAppender : public IAppender {
 public:
     FileAppender() : IAppender(AppenderType::file) {}
@@ -48,7 +50,20 @@ public:
         return (*this);
     }
     void write(const Record& record) override {
-        output_ << record.to_string();
+        static bool is_first_record = true;
+        if (Formatter::type() == FormatterType::json) {
+            if (is_first_record) {
+                is_first_record = false;
+                output_ << "[\n";
+            } else {
+                output_ << ",\n";
+            }
+        }
+        output_ << Formatter::format(record);
+    }
+    ~FileAppender() override {
+        if (Formatter::type() == FormatterType::json)
+            output_ << "\n]" << std::endl;
     }
 
 private:

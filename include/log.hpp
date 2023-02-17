@@ -1,8 +1,10 @@
 #pragma once
 
+#include <cstring>
+
 #include "init.hpp"
 
-#define GET_FILE __FILE_NAME__
+#define GET_FILE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #define GET_FUNC __FUNCTION__
 #define GET_LINE __LINE__
 

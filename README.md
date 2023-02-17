@@ -16,8 +16,13 @@ were come up and developed in the
 2. [Appenders](#Appenders)
    1. [FileAppender](#FileAppender)
    2. [ConsoleAppender](#ConsoleAppender)
-3. [Inspired by](#Inspired-by)
-4. [License](#License)
+3. [Formatters](#Formatters)
+   1. [TXTFormatter](#TXTFormatter)
+   2. [FuncMessagesFormatter](#FuncMessagesFormatter)
+   3. [OnlyMessagesFormatter](#OnlyMessagesFormatter)
+   4. [JSONFormatter](#JSONFormatter)
+4. [Inspired by](#Inspired-by)
+5. [License](#License)
 
 ## How to use
 
@@ -160,6 +165,61 @@ logger::Logger::get()->set_console_colour(logger::info,
 ```
 where `logger::common` equals to "without colour"
 (transparent background or common text colour).
+
+## Formatters
+
+Each formatter is a class, which has special static method `format`:
+```C++
+static std::string format(const Record& r);
+```
+The Formatters can represent log records in different forms.
+
+### TXTFormatter
+
+When you use `init` function to initializing the logger this formatter
+is set by default. Log messages represents in the following format:
+```
+2022-09-25 22:26:16 [INFO] main.cpp main() at line 11: Hello, world!
+```
+as you can see, there are timestamp, severity, file, function, line and message.
+
+### FuncMessagesFormatter
+
+This formatter contains only message with the function, which sent it, and line.
+```
+main.cpp@11: Hello, world!
+```
+
+### OnlyMessagesFormatter
+
+You can use this formatter, if you want see only the log messages.
+```
+Hello, world!
+```
+
+### JSONFormatter
+
+This formatter represents logs as json array:
+```json
+[
+	{
+		"timestamp":"2023-02-17T12:46:31.237Z",
+		"severity":"FATAL",
+		"file":"main.cpp",
+		"function":"main",
+		"line":"9",
+		"message":"Fatal"
+	},
+	{
+		"timestamp":"2023-02-17T12:46:31.237Z",
+		"severity":"ERROR",
+		"file":"main.cpp",
+		"function":"main",
+		"line":"10",
+		"message":"Error"
+	}
+]
+```
 
 ## Inspired by
 
