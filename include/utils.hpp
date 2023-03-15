@@ -34,10 +34,10 @@ public:
         auto itt = SysClock::to_time_t(timestamp_) + Time::timezone() * SEC_IN_HOUR;
         std::ostringstream ss;
         if (is_ISO_format)
-            ss << std::put_time(gmtime(&itt), "%FT%T.")
+            ss << std::put_time(gmtime(&itt), "%Y-%m-%dT%H:%M:%S.")
                << std::setw(3) << std::setfill('0') << ms << "Z";
         else
-            ss << std::put_time(gmtime(&itt), "%F %T.")
+            ss << std::put_time(gmtime(&itt), "%Y-%m-%d %H:%M:%S.")
                << std::setw(3) << std::setfill('0') << ms;
         return ss.str();
     }
@@ -67,7 +67,7 @@ std::string get_dirname(const fs::path& path) {
     if (path.string().empty())
         return "";
     if (fs::exists(path))
-        return fs::canonical(path).filename();
+        return fs::canonical(path).filename().string();
 
     auto str = path.string();
     unsigned length = str.length();

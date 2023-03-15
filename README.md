@@ -28,14 +28,13 @@ were come up and developed in the
 
 Now, you can download this repository and manually integrate
 `Logger` into your project.
-* Import `logger.hpp` and `macro.hpp`, where you want to use `Logger`;
+* Import `log.hpp`, where you want to use `Logger`;
 * Write your first log:
     ```C++
-    #include "logger.hpp"
-    #include "macro.hpp"
+    #include "log.hpp"
     
     int main() {
-        logger::Logger::init(logger::info, "../log");
+        logger::init(logger::info, "../log");
   
         LOG(logger::info) << "Hello, world!";
         LOGI << "Short form";
