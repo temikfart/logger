@@ -28,10 +28,14 @@ were come up and developed in the
 
 Now, you can download this repository and manually integrate
 `Logger` into your project.
-* Import `log.hpp`, where you want to use `Logger`;
+* Add `logger/include` to the project include paths;
+* Import `logger/log.hpp`, where you want to use `Logger`;
+* Import header with special initializer like `file_appender_initializer.hpp`
+* to init the logger (only once);
 * Write your first log:
     ```C++
-    #include "log.hpp"
+    #include "logger/log.hpp"
+    #include "logger/initializers/file_appender_initializer.hpp"
     
     int main() {
         logger::init(logger::info, "../log");
@@ -49,7 +53,7 @@ Now, you can download this repository and manually integrate
     ```
     _Notice: you can change timezone for timestamps with_
     ```C++
-    void utils::Time::set_timzone(int tz);
+    void utils::Time::set_timezone(int tz);
     ```
     _For example for Moscow: `set_timezone(3)`._
 
@@ -65,7 +69,7 @@ The most important and "root" macros are `LOG(severity)` and
 | --- | --- | --- | --- |
 | LOG(logger::fatal) | LOG_FATAL | LOGF | `fatal` error |
 | LOG(logger::error) | LOG_ERROR | LOGE | `error` |
-| LOG(logger::warning) | LOG_WARN | LOGW | `warning` |
+| LOG(logger::warn) | LOG_WARN | LOGW | `warn` |
 | LOG(logger::info) | LOG_INFO | LOGI | `info`|
 | LOG(logger::trace) | LOG_TRACE | LOGT | `trace` |
 | LOG(logger::debug) | LOG_DEBUG | LOGD | `debug` |
@@ -76,7 +80,7 @@ The same table of macros, but with condition:
 | --- | --- | --- | --- |
 | LOG_IF(condition, logger::fatal) | LOG_FATAL_IF(condition) | LOGF_IF(condition) | `fatal` error |
 | LOG_IF(condition, logger::error) | LOG_ERROR_IF(condition) | LOGE_IF(condition) | `error` |
-| LOG_IF(condition, logger::warning) | LOG_WARN_IF(condition) | LOGW_IF(condition) | `warning` |
+| LOG_IF(condition, logger::warn) | LOG_WARN_IF(condition) | LOGW_IF(condition) | `warn` |
 | LOG_IF(condition, logger::info) | LOG_INFO_IF(condition) | LOGI_IF(condition) | `info`|
 | LOG_IF(condition, logger::trace) | LOG_TRACE_IF(condition) | LOGT_IF(condition) | `trace` |
 | LOG_IF(condition, logger::debug) | LOG_DEBUG_IF(condition) | LOGD_IF(condition) | `debug` |

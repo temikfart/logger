@@ -4,11 +4,11 @@
 #include <fstream>
 #include <iostream>
 
-#include "appender_interface.hpp"
-#include "formatters_types.hpp"
-#include "record.hpp"
-#include "severity.hpp"
-#include "utils.hpp"
+#include "logger/appenders/appender_interface.hpp"
+#include "logger/formatters/formatters_types.hpp"
+#include "logger/record.hpp"
+#include "logger/severity.hpp"
+#include "logger/utils.hpp"
 
 namespace logger {
 

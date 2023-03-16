@@ -1,8 +1,8 @@
 #pragma once
 
-#include "colours.hpp"
-#include "record.hpp"
-#include "severity.hpp"
+#include "logger/colours.hpp"
+#include "logger/record.hpp"
+#include "logger/severity.hpp"
 
 namespace logger {
 

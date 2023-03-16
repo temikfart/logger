@@ -1,9 +1,10 @@
-#pragma once
+#ifndef RECORD_HPP_
+#define RECORD_HPP_
 
 #include <sstream>
 
-#include "severity.hpp"
-#include "utils.hpp"
+#include "logger/severity.hpp"
+#include "logger/utils.hpp"
 
 namespace logger {
 
@@ -44,3 +45,5 @@ public:
 };
 
 } // logger
+
+#endif // RECORD_HPP_

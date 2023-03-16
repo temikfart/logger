@@ -3,11 +3,11 @@
 #include <iostream>
 #include <map>
 
-#include "appender_interface.hpp"
-#include "colours.hpp"
-#include "formatters_types.hpp"
-#include "record.hpp"
-#include "severity.hpp"
+#include "logger/appenders/appender_interface.hpp"
+#include "logger/colours.hpp"
+#include "logger/formatters/formatters_types.hpp"
+#include "logger/record.hpp"
+#include "logger/severity.hpp"
 
 namespace logger {
 
@@ -56,7 +56,7 @@ private:
     std::map<Severity, MessageColours> severity_colours_ = {
         {fatal, {white, red}},
         {error, {red, common}},
-        {warning, {yellow, common}},
+        {warn, {yellow, common}},
         {info, {common, common}},
         {trace, {light_gray, common}},
         {debug, {white, common}}
