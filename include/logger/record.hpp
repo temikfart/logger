@@ -1,5 +1,4 @@
-#ifndef RECORD_HPP_
-#define RECORD_HPP_
+#pragma once
 
 #include <sstream>
 
@@ -21,7 +20,7 @@ public:
            << " " << file
            << " " << func << "()"
            << " at line " << line
-           << ": " << utils::remove_linebreaks(msg.str())
+           << ": " << utils::rtrim(msg.str())
            << std::endl;
         return ss.str();
     }
@@ -45,5 +44,3 @@ public:
 };
 
 } // logger
-
-#endif // RECORD_HPP_

@@ -61,7 +61,7 @@ public:
         }
         output_ << Formatter::format(record);
     }
-    ~FileAppender() override {
+    ~FileAppender() {
         if (Formatter::type() == FormatterType::json)
             output_ << "\n]" << std::endl;
     }

@@ -18,7 +18,7 @@ inline std::string to_string(const Severity severity) {
     switch (severity) {
         case fatal: return "fatal";
         case error: return "error";
-        case warn: return "warning";
+        case warn: return "warn";
         case info: return "info";
         case trace: return "trace";
         case debug: return "debug";
@@ -36,7 +36,6 @@ inline Severity to_severity(const std::string& severity) {
         default: return Severity::silent;
     }
 }
-
 inline std::ostream& operator<<(std::ostream& os, Severity severity) {
     os << to_string(severity);
     return os;

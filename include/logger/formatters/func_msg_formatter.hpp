@@ -14,7 +14,7 @@ public:
         ss << r.func << "@" << r.line << ": " << r.msg.str() << std::endl;
         return ss.str();
     }
-    static FormatterType type() { return FormatterType::funcMessages; }
+    inline static FormatterType type() { return FormatterType::funcMessages; }
 };
 
 } // logger

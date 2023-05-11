@@ -11,13 +11,10 @@
 
 namespace logger {
 
-template<class Formatter>
+template<class Formatter = TXTFormatter>
 Logger& init(Severity severity, StreamType type) {
     static ConsoleAppender<Formatter> console_appender(severity, type);
     return init(&console_appender);
-}
-Logger& init(Severity severity, StreamType type) {
-    return init<TXTFormatter>(severity, type);
 }
 
 } // logger

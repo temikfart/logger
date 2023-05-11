@@ -1,9 +1,9 @@
-#ifndef LOGGER_UTILS_HPP_
-#define LOGGER_UTILS_HPP_
+#pragma once
 
 #include <algorithm>
 #include <chrono>
 #include <ctime>
+#include <cctype>
 #include <filesystem>
 #include <iomanip>
 #include <string>
@@ -17,22 +17,15 @@ using TimePoint = std::chrono::time_point<SysClock>;
 using MilliSec = std::chrono::milliseconds;
 
 static const int MS_IN_SEC = 1000;
-static const int SEC_IN_HOUR = 3600;
 
 struct Time {
 public:
     Time() : timestamp_(SysClock::now()) {}
 
-//    static void set_timezone(int tz) {
-//        if (0 <= tz && tz <= 23)
-//            timezone_ = tz;
-//    }
-//    static int timezone() { return timezone_; }
-
     std::string to_string(bool is_ISO_format = false) const {
         auto tse = std::chrono::duration_cast<MilliSec>(timestamp_.time_since_epoch());
         int ms = (int) (tse.count() % MS_IN_SEC);
-        auto itt = SysClock::to_time_t(timestamp_);// + Time::timezone() * SEC_IN_HOUR;
+        auto itt = SysClock::to_time_t(timestamp_);
         std::ostringstream ss;
         if (is_ISO_format)
             ss << std::put_time(gmtime(&itt), "%Y-%m-%dT%H:%M:%S.")
@@ -45,13 +38,24 @@ public:
 
 private:
     const TimePoint timestamp_;
-//    static int timezone_;
 };
 
-//int timezone_ = 0;
-
-inline std::string remove_linebreaks(const std::string& str) {
-    return str.substr(0, str.rfind('\n'));
+inline std::string ltrim(std::string str) {
+    str.erase(str.begin(),
+              std::find_if(str.begin(), str.end(), [](unsigned char ch) {
+                  return !std::isspace(ch);
+              }));
+    return str;
+}
+inline std::string rtrim(std::string str) {
+    str.erase(std::find_if(str.rbegin(), str.rend(), [](unsigned char ch) {
+                  return !std::isspace(ch);
+              }).base(),
+              str.end());
+    return str;
+}
+inline std::string trim(const std::string& str) {
+    return ltrim(rtrim(str));
 }
 inline std::string to_upper(std::string str) {
     std::transform(str.begin(), str.end(), str.begin(), toupper);
@@ -67,10 +71,12 @@ inline std::string to_filepath(const Time& time, const fs::path& dir) {
 inline std::string get_dirname(const fs::path& path) {
     if (path.string().empty())
         return "";
-    if (fs::exists(path))
-        return fs::canonical(path).filename().string();
+    if (fs::exists(path)) {
+        if (fs::is_directory(path)) return fs::canonical(path).filename().string();
+        else return fs::canonical(path.parent_path()).filename().string();
+    }
 
-    auto str = path.string();
+    std::string str = path.string();
     unsigned length = str.length();
     while (length > 0 && (str[length - 1] == '.' || str[length - 1] == '/'))
         length--;
@@ -144,5 +150,3 @@ template<class T>
 T* Singleton<T>::instance_ = nullptr;
 
 } // logger
-
-#endif // LOGGER_UTILS_HPP_

@@ -11,17 +11,12 @@
 
 namespace logger {
 
-template<class Formatter>
+template<class Formatter = TXTFormatter>
 Logger& init(Severity severity,
              const fs::path& path = fs::current_path(),
              std::ios_base::openmode mode = std::ios::out) {
     static FileAppender<Formatter> file_appender(severity, path, mode);
     return init(&file_appender);
-}
-Logger& init(Severity severity,
-             const fs::path& path = fs::current_path(),
-             std::ios_base::openmode mode = std::ios::out) {
-    return init<TXTFormatter>(severity, path, mode);
 }
 
 } // logger

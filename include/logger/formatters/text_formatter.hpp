@@ -10,7 +10,7 @@ public:
     static std::string format(const Record& r) {
         return r.to_string();
     }
-    static FormatterType type() { return FormatterType::txt; }
+    inline static FormatterType type() { return FormatterType::txt; }
 };
 
 } // logger

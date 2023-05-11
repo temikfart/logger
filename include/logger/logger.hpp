@@ -1,15 +1,10 @@
-#ifndef LOGGER_HPP_
-#define LOGGER_HPP_
+#pragma once
 
 #include <iostream>
 #include <map>
 #include <optional>
 
 #include "logger/appenders/appender_interface.hpp"
-//#include "logger/appenders/console_appender.hpp"
-//#include "logger/appenders/file_appender.hpp"
-//#include "logger/record.hpp"
-//#include "logger/severity.hpp"
 #include "logger/utils.hpp"
 
 namespace logger {
@@ -60,9 +55,6 @@ public:
         if (appenders_.count(AppenderType::console) > 0)
             appenders_.at(AppenderType::console)->turn_colours_off();
     }
-//    static void set_timezone(int tz)  {
-//        utils::Time::set_timezone(tz);
-//    }
 
     void operator+=(const Record& r) { Logger::get()->write(r); }
     ~Logger() = default;
@@ -72,5 +64,3 @@ private:
 };
 
 } // logger
-
-#endif // LOGGER_HPP_
