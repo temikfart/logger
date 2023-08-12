@@ -9,5 +9,4 @@ include_directories(include/formatters)
 add_library(liblogger src/main.cpp)
 set_target_properties(liblogger PROPERTIES PREFIX "")
 target_include_directories(liblogger PUBLIC include include/appenders include/formatters)
-add_executable(logger
-        src/main.cpp)
+add_executable(logger src/main.cpp)

@@ -3,11 +3,11 @@
 #include <iostream>
 #include <map>
 
-#include "appender_interface.hpp"
-#include "colours.hpp"
-#include "formatters_types.hpp"
-#include "record.hpp"
-#include "severity.hpp"
+#include "logger/appenders/appender_interface.hpp"
+#include "logger/colours.hpp"
+#include "logger/formatters/formatters_types.hpp"
+#include "logger/record.hpp"
+#include "logger/severity.hpp"
 
 namespace logger {
 
@@ -38,14 +38,14 @@ public:
         if (coloured)
             output_ << to_text_colour(msg_col.text) << to_bg_colour(msg_col.bg);
         output_ << Formatter::format(record);
-        output_ << to_text_colour(common) << to_bg_colour(common);
+        output_ << to_text_colour(common) << to_bg_colour(common) << std::flush;
     }
     void set_colours(Severity severity, const MessageColours& msg_cols) override {
         severity_colours_[severity] = msg_cols;
     }
     void turn_colours_on() override { coloured = true; }
     void turn_colours_off() override { coloured = false; }
-    ~ConsoleAppender() override {
+    ~ConsoleAppender() {
         if (Formatter::type() == FormatterType::json)
             output_ << "\n]" << std::endl;
     }
@@ -56,7 +56,7 @@ private:
     std::map<Severity, MessageColours> severity_colours_ = {
         {fatal, {white, red}},
         {error, {red, common}},
-        {warning, {yellow, common}},
+        {warn, {yellow, common}},
         {info, {common, common}},
         {trace, {light_gray, common}},
         {debug, {white, common}}

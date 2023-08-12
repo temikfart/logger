@@ -20,7 +20,7 @@ struct MessageColours {
     Colour bg = common;
 };
 
-std::string to_text_colour(Colour col) {
+inline std::string to_text_colour(Colour col) {
     switch (col) {
         case white: return "\x1B[97m";
         case light_gray: return "\x1B[96m";
@@ -31,7 +31,7 @@ std::string to_text_colour(Colour col) {
     }
 }
 
-std::string to_bg_colour(Colour col) {
+inline std::string to_bg_colour(Colour col) {
     switch (col) {
         case red: return "\x1B[41m";
         default: return "\x1B[0K";

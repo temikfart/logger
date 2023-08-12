@@ -4,12 +4,8 @@
 #include <map>
 #include <optional>
 
-#include "appender_interface.hpp"
-#include "console_appender.hpp"
-#include "file_appender.hpp"
-#include "record.hpp"
-#include "severity.hpp"
-#include "utils.hpp"
+#include "logger/appenders/appender_interface.hpp"
+#include "logger/utils.hpp"
 
 namespace logger {
 

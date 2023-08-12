@@ -2,8 +2,8 @@
 
 #include <sstream>
 
-#include "severity.hpp"
-#include "utils.hpp"
+#include "logger/severity.hpp"
+#include "logger/utils.hpp"
 
 namespace logger {
 
@@ -20,7 +20,7 @@ public:
            << " " << file
            << " " << func << "()"
            << " at line " << line
-           << ": " << utils::remove_linebreaks(msg.str())
+           << ": " << utils::rtrim(msg.str())
            << std::endl;
         return ss.str();
     }

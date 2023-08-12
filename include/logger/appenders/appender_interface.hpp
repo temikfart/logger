@@ -1,8 +1,8 @@
 #pragma once
 
-#include "colours.hpp"
-#include "record.hpp"
-#include "severity.hpp"
+#include "logger/colours.hpp"
+#include "logger/record.hpp"
+#include "logger/severity.hpp"
 
 namespace logger {
 
@@ -17,7 +17,6 @@ class IAppender {
 public:
     IAppender(AppenderType type) : appender_type_(type) {}
     IAppender(AppenderType type, Severity severity) : appender_type_(type), severity_(severity) {}
-    virtual ~IAppender() = default;
     virtual void write(const Record& record) = 0;
     Severity severity() const { return severity_; }
     void set_severity(Severity severity) { severity_ = severity; }
@@ -25,6 +24,7 @@ public:
     virtual void set_colours(Severity severity, const MessageColours& msg_cols) {}
     virtual void turn_colours_on() {}
     virtual void turn_colours_off() {}
+//    virtual ~IAppender(); // TODO: See Vladimirov's lectures
 
 private:
     Severity severity_ = silent;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "formatters_types.hpp"
-#include "record.hpp"
+#include "logger/formatters/formatters_types.hpp"
+#include "logger/record.hpp"
 
 namespace logger {
 
@@ -10,7 +10,7 @@ public:
     static std::string format(const Record& r) {
         return r.msg.str() + "\n";
     }
-    static FormatterType type() { return FormatterType::onlyMessages; }
+    inline static FormatterType type() { return FormatterType::onlyMessages; }
 };
 
 } // logger
