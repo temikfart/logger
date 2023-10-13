@@ -6,7 +6,10 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(include)
 include_directories(include/appenders)
 include_directories(include/formatters)
+
 add_library(liblogger src/main.cpp)
 set_target_properties(liblogger PROPERTIES PREFIX "")
 target_include_directories(liblogger PUBLIC include include/appenders include/formatters)
+
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 add_executable(logger src/main.cpp)
