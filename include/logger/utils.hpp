@@ -61,6 +61,10 @@ inline std::string to_upper(std::string str) {
     std::transform(str.begin(), str.end(), str.begin(), toupper);
     return str;
 }
+inline std::string to_lower(std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(), tolower);
+    return str;
+}
 inline std::string to_filepath(const Time& time, const fs::path& dir) {
     auto filename = time.to_string();
     std::replace_if(filename.begin(), filename.end(),
