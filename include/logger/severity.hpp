@@ -1,8 +1,19 @@
 #pragma once
 
 #include <cctype>
+#include <stdexcept>
+
+#include "utils.hpp"
 
 namespace logger {
+
+#define SILENT "silent"
+#define FATAL "fatal"
+#define ERROR "error"
+#define WARN "warn"
+#define INFO "info"
+#define DEBUG "debug"
+#define TRACE "trace"
 
 enum Severity {
     silent,
@@ -14,27 +25,27 @@ enum Severity {
     trace,
 };
 
-inline std::string to_string(const Severity severity) {
+inline std::string to_string(Severity severity) {
     switch (severity) {
-        case fatal: return "fatal";
-        case error: return "error";
-        case warn: return "warn";
-        case info: return "info";
-        case trace: return "trace";
-        case debug: return "debug";
-        default: return "silent";
+        case silent: return SILENT;
+        case fatal: return FATAL;
+        case error: return ERROR;
+        case warn: return WARN;
+        case info: return INFO;
+        case debug: return DEBUG;
+        case trace: return TRACE;
     }
 }
-inline Severity to_severity(const std::string& severity) {
-    switch (tolower(severity[0])) {
-        case 'f': return Severity::fatal;
-        case 'e': return Severity::error;
-        case 'w': return Severity::warn;
-        case 'i': return Severity::info;
-        case 't': return Severity::trace;
-        case 'd': return Severity::debug;
-        default: return Severity::silent;
-    }
+inline Severity to_severity(const std::string& severity_str) {
+    std::string severity = utils::to_lower(severity_str);
+    if (severity == SILENT) return silent;
+    if (severity == FATAL) return fatal;
+    if (severity == ERROR) return error;
+    if (severity == WARN) return warn;
+    if (severity == INFO) return info;
+    if (severity == DEBUG) return debug;
+    if (severity == TRACE) return trace;
+    throw std::invalid_argument("Incorrect representation of severity as string: " + severity_str);
 }
 inline std::ostream& operator<<(std::ostream& os, Severity severity) {
     os << to_string(severity);
