@@ -2,18 +2,19 @@
 
 #include <cctype>
 #include <stdexcept>
+#include <string_view>
 
 #include "utils.hpp"
 
 namespace logger {
 
-#define SILENT "silent"
-#define FATAL "fatal"
-#define ERROR "error"
-#define WARN "warn"
-#define INFO "info"
-#define DEBUG "debug"
-#define TRACE "trace"
+constexpr std::string_view SILENT = "silent";
+constexpr std::string_view FATAL = "fatal";
+constexpr std::string_view ERROR = "error";
+constexpr std::string_view WARN = "warn";
+constexpr std::string_view INFO = "info";
+constexpr std::string_view DEBUG = "debug";
+constexpr std::string_view TRACE = "trace";
 
 enum Severity {
     silent,
@@ -25,7 +26,7 @@ enum Severity {
     trace,
 };
 
-inline std::string to_string(Severity severity) {
+constexpr std::string_view to_string(Severity severity) {
     switch (severity) {
         case silent: return SILENT;
         case fatal: return FATAL;

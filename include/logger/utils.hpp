@@ -57,13 +57,15 @@ inline std::string rtrim(std::string str) {
 inline std::string trim(const std::string& str) {
     return ltrim(rtrim(str));
 }
-inline std::string to_upper(std::string str) {
-    std::transform(str.begin(), str.end(), str.begin(), toupper);
-    return str;
+inline std::string to_upper(const std::string_view& str) {
+    std::string res(str);
+    std::transform(res.begin(), res.end(), res.begin(), toupper);
+    return res;
 }
-inline std::string to_lower(std::string str) {
-    std::transform(str.begin(), str.end(), str.begin(), tolower);
-    return str;
+inline std::string to_lower(const std::string_view& str) {
+    std::string res(str);
+    std::transform(res.begin(), res.end(), res.begin(), tolower);
+    return res;
 }
 inline std::string to_filepath(const Time& time, const fs::path& dir) {
     auto filename = time.to_string();
