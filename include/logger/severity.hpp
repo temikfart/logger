@@ -36,6 +36,7 @@ constexpr std::string_view to_string(Severity severity) {
         case debug: return DEBUG;
         case trace: return TRACE;
     }
+    throw std::invalid_argument("Unexpected severity value: " + std::to_string(severity));
 }
 inline Severity to_severity(const std::string& severity_str) {
     std::string severity = utils::to_lower(severity_str);
