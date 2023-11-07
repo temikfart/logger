@@ -11,5 +11,7 @@ add_library(liblogger src/main.cpp)
 set_target_properties(liblogger PROPERTIES PREFIX "")
 target_include_directories(liblogger PUBLIC include include/appenders include/formatters)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+endif()
 add_executable(logger src/main.cpp)
