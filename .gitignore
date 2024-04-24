@@ -33,7 +33,12 @@
 
 # CLion
 .idea
+
+# Build directories
+build
 cmake-build-debug
+build-debug
+build-release
 
 # MacOS
 .DS_STORE
