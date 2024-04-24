@@ -42,11 +42,11 @@ public:
 
     template <typename T>
     FileAppender& operator<<(const T& data) {
-        output_ << data;
+        output_ << data << std::flush;
         return (*this);
     }
     FileAppender& operator<<(std::ostream& (* os)(std::ostream&)) {
-        output_ << os;
+        output_ << os << std::flush;
         return (*this);
     }
     void write(const Record& record) override {
@@ -59,11 +59,12 @@ public:
                 output_ << ",\n";
             }
         }
-        output_ << Formatter::format(record);
+        output_ << Formatter::format(record) << std::flush;
     }
     ~FileAppender() {
-        if (Formatter::type() == FormatterType::json)
-            output_ << "\n]" << std::endl;
+        if (Formatter::type() == FormatterType::json) {
+            output_ << "\n]" << std::endl << std::flush;
+        }
     }
 
 private:

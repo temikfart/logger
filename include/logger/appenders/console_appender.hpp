@@ -31,6 +31,7 @@ public:
             } else {
                 output_ << ",\n";
             }
+            output_.flush();
         }
 
         Severity sev = record.severity;
@@ -47,7 +48,7 @@ public:
     void turn_colours_off() override { coloured = false; }
     ~ConsoleAppender() {
         if (Formatter::type() == FormatterType::json)
-            output_ << "\n]" << std::endl;
+            output_ << "\n]" << std::endl << std::flush;
     }
 
 private:
