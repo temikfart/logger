@@ -25,7 +25,6 @@ public:
     virtual void set_colours(Severity /*unused*/, const MessageColours& /*unused*/) {}
     virtual void turn_colours_on() {}
     virtual void turn_colours_off() {}
-//    virtual ~IAppender(); // TODO: See Vladimirov's lectures
 
 private:
     Severity severity_ = silent;
