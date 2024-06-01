@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <iomanip>
 #include <string>
+#include <sstream>
 
 namespace fs = std::filesystem;
 
